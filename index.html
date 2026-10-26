@@ -38,7 +38,7 @@
   .field .ico{position:absolute;right:1rem;top:1rem;width:22px;height:22px;color:#1d4ed8;pointer-events:none}
   .field.err input,.field.err select,.field.err textarea{border-color:#e11d48;background:#fff1f2}
   .msg{color:#e11d48;font-size:.8rem;margin-top:.3rem;display:none}
-  .field.err .msg,.err-box .msg{display:block}
+  .field.err .msg,.err-box.err .msg{display:block}
   label.lbl{display:block;font-weight:700;margin-bottom:.4rem;color:#0a1a3f}
 
   /* Art type selection cards */
@@ -174,6 +174,8 @@
         <svg class="ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
         <div class="flex justify-between"><p class="msg">اكتب نبذة من 20 حرفا على الأقل.</p><span id="count" class="text-xs text-slate-400 mt-1">0 / 500</span></div>
       </div>
+
+      <p id="formError" class="hidden rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm p-3" role="alert"></p>
 
       <button type="submit" id="submitBtn" class="btn w-full">أرسل مشاركتي 🎨</button>
     </form>
@@ -314,10 +316,12 @@ form.addEventListener('submit', async e=>{
     submittedAt: new Date().toISOString()
   };
 
+  const errBox = document.getElementById('formError'); errBox.classList.add('hidden');
   btn.disabled = true; btn.textContent = 'جار الإرسال...';
+  const ctrl = new AbortController(); const timer = setTimeout(()=>ctrl.abort(), 20000);  // stop waiting after 20s
   try{
     const res = await fetch(FORMSUBMIT_URL, {
-      method:'POST',
+      method:'POST', signal: ctrl.signal,
       headers:{'Content-Type':'application/json','Accept':'application/json'},
       body: JSON.stringify({
         _subject: 'تسجيل جديد - الأسبوع الجامعي للفن والثقافة',
@@ -343,8 +347,12 @@ form.addEventListener('submit', async e=>{
     cards.forEach(c=>c.classList.remove('active')); typeInput.value=''; document.getElementById('otherWrap').style.display='none';
     document.getElementById('count').textContent='0 / 500';
   }catch(err){
-    alert('تعذر إرسال الاستمارة. يرجى المحاولة مرة أخرى.');
+    errBox.textContent = err.name==='AbortError'
+      ? 'انتهت مهلة الاتصال. تحقق من الإنترنت وأعد المحاولة.'
+      : 'تعذر إرسال الاستمارة. يرجى المحاولة مرة أخرى. (' + (err.message||err) + ')';
+    errBox.classList.remove('hidden');
   }finally{
+    clearTimeout(timer);
     btn.disabled=false; btn.textContent='أرسل مشاركتي 🎨';
   }
 });
