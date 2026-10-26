@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>التسجيل | الأسبوع الجامعي للفن والثقافة</title>
+<!-- Fonts: Reem Kufi (display) + Tajawal (body) -->
+<link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<!-- Tailwind via CDN (for production, compile Tailwind instead) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { navy:'#0a1a3f', royal:'#1d4ed8', gold:'#f5b81c', slate2:'#1e293b' },
+    fontFamily: { display:['"Reem Kufi"','serif'], body:['Tajawal','sans-serif'] }
+  }}}
+</script>
+<style>
+  body{font-family:'Tajawal',sans-serif;background:#071330;color:#fff;overflow-x:hidden}
+  .font-display{font-family:'Reem Kufi',serif}
+
+  /* Watercolor strokes in the background */
+  .wash{position:fixed;border-radius:50%;filter:blur(70px);opacity:.55;pointer-events:none;z-index:0}
+
+  /* Floating art icons (moved by JS parallax + CSS bobbing) */
+  .float-wrap{position:fixed;z-index:1;pointer-events:none;transition:transform .25s ease-out}
+  .float-item{display:block;animation:bob 6s ease-in-out infinite;opacity:.35;filter:drop-shadow(0 4px 12px rgba(245,184,28,.35))}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-18px) rotate(8deg)}}
+
+  /* Form card */
+  .card{background:#fff;color:#1e293b;border-radius:28px;box-shadow:0 30px 80px -20px rgba(0,0,0,.6)}
+  .field{position:relative}
+  .field input,.field select,.field textarea{
+    width:100%;border:2px solid #e2e8f0;border-radius:14px;padding:.85rem 3rem .85rem 1rem;
+    background:#f8fafc;outline:none;transition:all .25s ease;font-size:1rem;color:#1e293b}
+  .field textarea{padding-top:.85rem;resize:vertical;min-height:110px}
+  .field input:focus,.field select:focus,.field textarea:focus{
+    border-color:#1d4ed8;background:#fff;box-shadow:0 0 0 5px rgba(29,78,216,.15),0 8px 24px -8px rgba(29,78,216,.4);transform:scale(1.015)}
+  .field .ico{position:absolute;right:1rem;top:1rem;width:22px;height:22px;color:#1d4ed8;pointer-events:none}
+  .field.err input,.field.err select,.field.err textarea{border-color:#e11d48;background:#fff1f2}
+  .msg{color:#e11d48;font-size:.8rem;margin-top:.3rem;display:none}
+  .field.err .msg,.err-box .msg{display:block}
+  label.lbl{display:block;font-weight:700;margin-bottom:.4rem;color:#0a1a3f}
+
+  /* Art type selection cards */
+  .type-card{cursor:pointer;border:2px solid #e2e8f0;border-radius:18px;padding:.9rem .5rem;text-align:center;
+    transition:all .25s;background:#f8fafc;user-select:none}
+  .type-card:hover{transform:translateY(-4px);border-color:#f5b81c}
+  .type-card.active{border-color:#1d4ed8;background:linear-gradient(135deg,#1d4ed8,#0a1a3f);color:#fff;transform:translateY(-4px) scale(1.04);box-shadow:0 14px 30px -10px rgba(29,78,216,.7)}
+  .type-card .em{font-size:1.9rem;display:block}
+  .type-card small{display:block;opacity:.7;font-size:.72rem;margin-top:.25rem;line-height:1.4}
+
+  /* Tags */
+  .tag{background:#fef3c7;color:#92400e;border:1px solid #f5b81c;border-radius:999px;padding:.2rem .7rem;font-size:.85rem;display:inline-flex;gap:.4rem;align-items:center;animation:pop .25s}
+  .tag button{font-weight:700;line-height:1}
+  @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+
+  /* Button with ripple + morph */
+  .btn{position:relative;overflow:hidden;border-radius:16px;background:linear-gradient(135deg,#f5b81c,#ff9d00);color:#0a1a3f;font-weight:700;
+    font-size:1.15rem;padding:1rem 2rem;transition:all .35s cubic-bezier(.2,.9,.3,1.4);box-shadow:0 12px 30px -10px rgba(245,184,28,.8)}
+  .btn:hover{border-radius:40px;transform:translateY(-3px);letter-spacing:.04em}
+  .btn:disabled{opacity:.7;cursor:wait}
+  .ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.65);transform:scale(0);animation:rip .6s linear;pointer-events:none}
+  @keyframes rip{to{transform:scale(4);opacity:0}}
+
+  /* One orchestrated entrance: title letters */
+  .hero-in{animation:rise .9s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes rise{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+
+  #confetti{position:fixed;inset:0;z-index:60;pointer-events:none}
+  .modal{position:fixed;inset:0;z-index:50;background:rgba(7,19,48,.8);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:1rem}
+  .modal.show{display:flex}
+
+  @media (prefers-reduced-motion:reduce){.float-item,.hero-in{animation:none}.float-wrap{display:none}}
+</style>
+</head>
+<body class="min-h-screen relative">
+
+<!-- Watercolor washes -->
+<div class="wash" style="width:520px;height:520px;background:#1d4ed8;top:-150px;right:-120px"></div>
+<div class="wash" style="width:420px;height:420px;background:#f5b81c;opacity:.28;bottom:-140px;left:-100px"></div>
+<div class="wash" style="width:380px;height:380px;background:#2563eb;top:45%;left:-160px;opacity:.4"></div>
+
+<!-- Floating art elements (data-depth controls parallax strength) -->
+<div id="floaters"></div>
+
+<main class="relative z-10 max-w-3xl mx-auto px-4 py-10 sm:py-16">
+
+  <!-- Header -->
+  <header class="text-center mb-10 hero-in">
+    <div class="inline-block bg-white rounded-2xl px-4 py-3 shadow-2xl mb-7"><img src="data:image/png;base64,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" alt="شعار كلية الآداب والعلوم الإنسانية عين الشق - جامعة الحسن الثاني" class="h-16 sm:h-20 w-auto"></div>
+    <h1 class="font-display text-4xl sm:text-6xl font-bold leading-tight">
+      الأسبوع الجامعي <br class="sm:hidden">للفن والثقافة
+    </h1>
+    <p class="mt-5 text-lg sm:text-2xl text-gold font-medium">بالإبداع نرتقي، وبالمعرفة نبني المستقبل</p>
+    
+    <p class="mt-6 text-sm text-white/60">تنظيم: نادي Enactus FLSH Ain Chock</p>
+  </header>
+
+  <!-- Registration form -->
+  <section class="card p-5 sm:p-10 hero-in" style="animation-delay:.2s">
+    <h2 class="font-display text-2xl sm:text-3xl text-navy font-bold mb-1">سجل مشاركتك</h2>
+    <p class="text-slate-500 mb-8">املأ الاستمارة وأخبرنا بموهبتك، وسنتواصل معك لتأكيد مشاركتك.</p>
+
+    <form id="regForm" novalidate class="space-y-6">
+
+      <!-- 1. Full name -->
+      <div class="field">
+        <label class="lbl" for="fullName">الاسم الكامل</label>
+        <input id="fullName" name="fullName" type="text" autocomplete="name" placeholder="مثال: سلمى الإدريسي">
+        <svg class="ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+        <p class="msg">يرجى إدخال اسمك الكامل (حرفان على الأقل).</p>
+      </div>
+
+      <!-- 2. Apogée number -->
+      <div class="field">
+        <label class="lbl" for="apogee">رقم أبوجي</label>
+        <input id="apogee" name="apogee" type="text" inputmode="numeric" maxlength="10" dir="ltr" style="text-align:right" placeholder="مثال: 22012345">
+        <svg class="ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 10h4M7 14h10"/></svg>
+        <p class="msg">رقم أبوجي يتكون من 7 إلى 10 أرقام.</p>
+      </div>
+
+      <!-- 3. Department -->
+      <div class="field">
+        <label class="lbl" for="dept">الشعبة / المسلك الدراسي</label>
+        <select id="dept" name="dept">
+          <option value="">اختر شعبتك</option>
+          <option>اللغة العربية وآدابها</option>
+          <option>اللغة الإنجليزية وآدابها</option>
+          <option>اللغة الفرنسية وآدابها</option>
+          <option>التاريخ والحضارة</option>
+          <option>الجغرافيا</option>
+          <option>علم الاجتماع</option>
+          <option>الفلسفة</option>
+          <option>علم النفس</option>
+          <option>الدراسات الإسلامية</option>
+          <option>مسلك آخر</option>
+        </select>
+        <svg class="ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-5 9 5-9 5-9-5z"/><path d="M7 12v4c0 1 2.5 3 5 3s5-2 5-3v-4"/></svg>
+        <p class="msg">يرجى اختيار الشعبة.</p>
+      </div>
+
+      <!-- 4. Art type (selection cards) -->
+      <div id="typeBox" class="err-box">
+        <span class="lbl">نوع الفن أو الموهبة</span>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="typeGrid">
+          <div class="type-card" data-value="visual" data-label="الفنون التشكيلية والبصرية" tabindex="0" role="radio"><span class="em">🎨</span><b class="text-sm">الفنون التشكيلية والبصرية</b><small>الرسم، الصباغة، النحت، الخط العربي</small></div>
+          <div class="type-card" data-value="recycle" data-label="إعادة التدوير والابتكار البيئي" tabindex="0" role="radio"><span class="em">♻️</span><b class="text-sm">إعادة التدوير والابتكار البيئي</b><small>مجسمات ولوحات وديكورات من مواد معاد تدويرها</small></div>
+          <div class="type-card" data-value="music" data-label="الفنون الموسيقية" tabindex="0" role="radio"><span class="em">🎵</span><b class="text-sm">الفنون الموسيقية</b><small>العزف المنفرد، الغناء، المجموعات الصوتية</small></div>
+          <div class="type-card" data-value="theater" data-label="الفنون المسرحية والدرامية" tabindex="0" role="radio"><span class="em">🎭</span><b class="text-sm">الفنون المسرحية والدرامية</b><small>التجسيد المسرحي، المونودراما، الكوميديا الارتجالية</small></div>
+          <div class="type-card" data-value="cinema" data-label="الفنون السينمائية والتصوير" tabindex="0" role="radio"><span class="em">🎬</span><b class="text-sm">الفنون السينمائية والتصوير</b><small>الأفلام القصيرة، التصوير الفوتوغرافي، المونتاج</small></div>
+          <div class="type-card" data-value="literature" data-label="الأدب والشعر" tabindex="0" role="radio"><span class="em">✒️</span><b class="text-sm">الأدب والشعر</b><small>إلقاء الشعر، الزجل، القصة القصيرة، كتابة النصوص</small></div>
+          <div class="type-card" data-value="performance" data-label="الأداء الجسدي والتعبير الحركي" tabindex="0" role="radio"><span class="em">💃</span><b class="text-sm">الأداء الجسدي والتعبير الحركي</b><small>الرقص التعبيري، البانتوميم، البهلوانات</small></div>
+          <div class="type-card" data-value="other" data-label="أخرى" tabindex="0" role="radio"><span class="em">✨</span><b class="text-sm">أخرى</b><small>فن آخر غير مدرج في القائمة</small></div>
+          </div>
+        <div id="otherWrap" class="field mt-4" style="display:none"><input id="otherArt" name="otherArt" type="text" placeholder="اكتب نوع فنك أو موهبتك" style="padding-right:1rem"></div>
+        <input type="hidden" id="artType" name="artType">
+        <p class="msg">يرجى اختيار نوع موهبتك (وكتابته إن اخترت «أخرى»).</p>
+      </div>
+
+      <!-- 5. Materials / tools (tags input) -->
+      <div id="toolsBox" class="err-box">
+        <label class="lbl" for="toolInput">المواد والأدوات المستعملة في فنك</label>
+        <div class="border-2 border-slate-200 bg-slate-50 rounded-2xl p-3 focus-within:border-royal focus-within:bg-white focus-within:shadow-[0_0_0_5px_rgba(29,78,216,.15)] transition-all">
+          <div id="tags" class="flex flex-wrap gap-2 mb-2"></div>
+          <input id="toolInput" type="text" class="w-full bg-transparent outline-none" placeholder="اكتب أداة ثم اضغط Enter أو الفاصلة (آلات موسيقية، ألوان زيتية، عدسة كاميرا...)">
+        </div>
+        <p class="msg">أضف أداة أو مادة واحدة على الأقل.</p>
+      </div>
+
+      <!-- 6. Bio -->
+      <div class="field">
+        <label class="lbl" for="bio">نبذة مختصرة عن مشاركتك أو موهبتك</label>
+        <textarea id="bio" name="bio" maxlength="500" placeholder="حدثنا عما ستقدمه خلال الأسبوع الثقافي..."></textarea>
+        <svg class="ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+        <div class="flex justify-between"><p class="msg">اكتب نبذة من 20 حرفا على الأقل.</p><span id="count" class="text-xs text-slate-400 mt-1">0 / 500</span></div>
+      </div>
+
+      <button type="submit" id="submitBtn" class="btn w-full">أرسل مشاركتي 🎨</button>
+    </form>
+  </section>
+
+  <footer class="text-center text-white/50 text-sm mt-10">
+    © 2026 نادي Enactus FLSH Ain Chock — كلية الآداب والعلوم الإنسانية عين الشق، جامعة الحسن الثاني
+  </footer>
+</main>
+
+<!-- Success modal -->
+<div id="modal" class="modal" role="dialog" aria-modal="true">
+  <div class="card max-w-md w-full p-8 text-center">
+    <div class="text-6xl mb-3">🎉</div>
+    <h3 class="font-display text-2xl text-navy font-bold mb-2">تم تسجيل مشاركتك!</h3>
+    <p class="text-slate-600 mb-6">شكرا <span id="okName" class="font-bold text-royal"></span>، سنتواصل معك قريبا لتأكيد برنامج مشاركتك.</p>
+    <button id="closeModal" class="btn w-full">إغلاق</button>
+  </div>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+/* ---------- 1. Floating elements + mouse parallax ---------- */
+const icons = ['🎵','🎭','📷','🎨','🖌️','🎬','✒️','🎻','🎶','🖼️'];
+const floaters = document.getElementById('floaters');
+icons.forEach((ic,i)=>{
+  const w = document.createElement('div');
+  w.className = 'float-wrap';
+  w.dataset.depth = (10 + (i%4)*12);                     // parallax strength
+  w.style.top  = (6 + (i*37)%86) + '%';
+  w.style.left = (4 + (i*53)%88) + '%';
+  w.innerHTML = `<span class="float-item" style="font-size:${28+(i%3)*14}px;animation-delay:${i*-0.7}s">${ic}</span>`;
+  floaters.appendChild(w);
+});
+document.addEventListener('mousemove', e=>{
+  const x = e.clientX/innerWidth - .5, y = e.clientY/innerHeight - .5;
+  document.querySelectorAll('.float-wrap').forEach(el=>{
+    const d = +el.dataset.depth;
+    el.style.transform = `translate(${x*d*-2}px,${y*d*-2}px)`;
+  });
+});
+
+/* ---------- 2. Ripple effect on buttons ---------- */
+document.addEventListener('click', e=>{
+  const b = e.target.closest('.btn'); if(!b) return;
+  const r = b.getBoundingClientRect(), s = Math.max(r.width,r.height);
+  const sp = document.createElement('span');
+  sp.className = 'ripple';
+  sp.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;
+  b.appendChild(sp); setTimeout(()=>sp.remove(),600);
+});
+
+/* ---------- 3. Art type cards ---------- */
+const typeInput = document.getElementById('artType');
+const cards = document.querySelectorAll('.type-card');
+function pick(c){
+  cards.forEach(x=>{x.classList.remove('active');x.setAttribute('aria-checked','false')});
+  c.classList.add('active'); c.setAttribute('aria-checked','true');
+  typeInput.value = c.dataset.value;
+  const ow=document.getElementById('otherWrap'); ow.style.display = c.dataset.value==='other' ? 'block' : 'none';
+  if(c.dataset.value==='other') document.getElementById('otherArt').focus();
+  document.getElementById('typeBox').classList.remove('err');
+}
+cards.forEach(c=>{
+  c.addEventListener('click',()=>pick(c));
+  c.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(c)} });
+});
+
+/* ---------- 4. Tags input (materials / tools) ---------- */
+const tools = [];
+const tagsEl = document.getElementById('tags'), toolInput = document.getElementById('toolInput');
+function renderTags(){
+  tagsEl.innerHTML = '';
+  tools.forEach((t,i)=>{
+    const s = document.createElement('span'); s.className='tag';
+    s.textContent = t;
+    const x = document.createElement('button'); x.type='button'; x.textContent='×'; x.setAttribute('aria-label','حذف');
+    x.onclick = ()=>{tools.splice(i,1);renderTags()};
+    s.appendChild(x); tagsEl.appendChild(s);
+  });
+}
+function addTool(){
+  const v = toolInput.value.replace(/[،,]/g,'').trim();
+  if(v && !tools.includes(v)){ tools.push(v); renderTags(); document.getElementById('toolsBox').classList.remove('err'); }
+  toolInput.value='';
+}
+toolInput.addEventListener('keydown',e=>{
+  if(e.key==='Enter'||e.key===','||e.key==='،'){e.preventDefault();addTool()}
+  if(e.key==='Backspace' && !toolInput.value && tools.length){tools.pop();renderTags()}
+});
+toolInput.addEventListener('blur',addTool);
+
+/* ---------- 5. Bio counter + live error clearing ---------- */
+const bio = document.getElementById('bio');
+bio.addEventListener('input',()=>document.getElementById('count').textContent = bio.value.length+' / 500');
+document.querySelectorAll('.field input,.field select,.field textarea').forEach(el=>
+  el.addEventListener('input',()=>el.closest('.field').classList.remove('err')));
+document.getElementById('apogee').addEventListener('input',e=>e.target.value = e.target.value.replace(/\D/g,''));
+
+/* ---------- 6. Validation ---------- */
+function validate(){
+  const f = id=>document.getElementById(id);
+  const rules = [
+    [f('fullName').closest('.field'), f('fullName').value.trim().length>=2],
+    [f('apogee').closest('.field'),   /^\d{7,10}$/.test(f('apogee').value)],
+    [f('dept').closest('.field'),     !!f('dept').value],
+    [f('typeBox'),                    !!typeInput.value && (typeInput.value!=='other' || f('otherArt').value.trim().length>=2)],
+    [f('toolsBox'),                   tools.length>0],
+    [f('bio').closest('.field'),      f('bio').value.trim().length>=20],
+  ];
+  let ok = true, first = null;
+  rules.forEach(([el,valid])=>{ el.classList.toggle('err',!valid); if(!valid){ok=false; first = first||el} });
+  if(first) first.scrollIntoView({behavior:'smooth',block:'center'});
+  return ok;
+}
+
+/* ---------- 7. Submit to Google Form ----------
+   SETUP: create a Google Form with 6 short/long-answer questions (name, apogee, department, art type, tools, bio).
+   1) Replace FORM_ID with the ID in the form link (.../forms/d/e/FORM_ID/viewform)
+   2) Replace each entry.XXXXXXXXX with the real field IDs (get them via: form menu ⋮ > "Get pre-filled link",
+      fill each question with a test word, click "Get link", and read entry.NNN=word in the URL).
+   3) All questions must be plain text answers (not required dropdowns/checkboxes) so any value is accepted. */
+const GOOGLE_FORM = {
+  action: 'https://docs.google.com/forms/d/e/FORM_ID/formResponse',
+  entries: {
+    fullName:   'entry.1111111111',
+    apogee:     'entry.2222222222',
+    department: 'entry.3333333333',
+    artType:    'entry.4444444444',
+    tools:      'entry.5555555555',
+    bio:        'entry.6666666666'
+  }
+};
+const form = document.getElementById('regForm'), btn = document.getElementById('submitBtn');
+form.addEventListener('submit', async e=>{
+  e.preventDefault();
+  if(!validate()) return;
+
+  // Payload ready to send to your API
+  const payload = {
+    fullName: form.fullName.value.trim(),
+    apogee:   form.apogee.value,
+    department: form.dept.value,
+    artType:  typeInput.value==='other' ? form.otherArt.value.trim() : document.querySelector('.type-card.active').dataset.label,
+    tools:    tools,                       // array of strings
+    bio:      bio.value.trim(),
+    event:    'university-week-art-culture-2026',
+    submittedAt: new Date().toISOString()
+  };
+
+  btn.disabled = true; btn.textContent = 'جار الإرسال...';
+  try{
+    // Send to Google Form (see GOOGLE_FORM config below). no-cors => response is opaque, so success is assumed if no network error.
+    const body = new URLSearchParams();
+    body.append(GOOGLE_FORM.entries.fullName,   payload.fullName);
+    body.append(GOOGLE_FORM.entries.apogee,     payload.apogee);
+    body.append(GOOGLE_FORM.entries.department, payload.department);
+    body.append(GOOGLE_FORM.entries.artType,    payload.artType);
+    body.append(GOOGLE_FORM.entries.tools,      payload.tools.join('، '));
+    body.append(GOOGLE_FORM.entries.bio,        payload.bio);
+    await fetch(GOOGLE_FORM.action, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body});
+    console.log('Registration payload:', payload);
+
+    document.getElementById('okName').textContent = payload.fullName.split(' ')[0];
+    document.getElementById('modal').classList.add('show');
+    paintBurst();
+    form.reset(); tools.length=0; renderTags();
+    cards.forEach(c=>c.classList.remove('active')); typeInput.value=''; document.getElementById('otherWrap').style.display='none';
+    document.getElementById('count').textContent='0 / 500';
+  }catch(err){
+    alert('تعذر إرسال الاستمارة. يرجى المحاولة مرة أخرى.');
+  }finally{
+    btn.disabled=false; btn.textContent='أرسل مشاركتي 🎨';
+  }
+});
+document.getElementById('closeModal').onclick = ()=>document.getElementById('modal').classList.remove('show');
+
+/* ---------- 8. Paint-splash confetti ---------- */
+const cv = document.getElementById('confetti'), ctx = cv.getContext('2d');
+function size(){cv.width=innerWidth;cv.height=innerHeight} size(); addEventListener('resize',size);
+function paintBurst(){
+  const colors=['#1d4ed8','#2563eb','#f5b81c','#ff9d00','#ffffff','#60a5fa'];
+  const ps = Array.from({length:160},()=>{
+    const a = Math.random()*Math.PI*2, v = 6+Math.random()*12;
+    return {x:innerWidth/2,y:innerHeight/2,vx:Math.cos(a)*v,vy:Math.sin(a)*v-6,r:4+Math.random()*9,
+      c:colors[Math.random()*colors.length|0],life:1,round:Math.random()>.4,rot:Math.random()*6}
+  });
+  (function frame(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    let alive=false;
+    ps.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy; p.vy+=.35; p.vx*=.985; p.life-=.011; p.rot+=.15;
+      if(p.life>0){alive=true; ctx.globalAlpha=p.life; ctx.fillStyle=p.c; ctx.beginPath();
+        if(p.round) ctx.arc(p.x,p.y,p.r,0,7); else ctx.rect(p.x,p.y,p.r*1.6,p.r*.7);
+        ctx.fill()}
+    });
+    alive ? requestAnimationFrame(frame) : ctx.clearRect(0,0,cv.width,cv.height);
+  })();
+}
+</script>
+</body>
+</html>
