@@ -291,23 +291,12 @@ function validate(){
   return ok;
 }
 
-/* ---------- 7. Submit to Google Form ----------
-   SETUP: create a Google Form with 6 short/long-answer questions (name, apogee, department, art type, tools, bio).
-   1) Replace FORM_ID with the ID in the form link (.../forms/d/e/FORM_ID/viewform)
-   2) Replace each entry.XXXXXXXXX with the real field IDs (get them via: form menu ⋮ > "Get pre-filled link",
-      fill each question with a test word, click "Get link", and read entry.NNN=word in the URL).
-   3) All questions must be plain text answers (not required dropdowns/checkboxes) so any value is accepted. */
-const GOOGLE_FORM = {
-  action: 'https://docs.google.com/forms/d/e/FORM_ID/formResponse',
-  entries: {
-    fullName:   'entry.1111111111',
-    apogee:     'entry.2222222222',
-    department: 'entry.3333333333',
-    artType:    'entry.4444444444',
-    tools:      'entry.5555555555',
-    bio:        'entry.6666666666'
-  }
-};
+/* ---------- 7. Submit via FormSubmit.co (emails the registration) ----------
+   Main address receives the email, the second one is added as CC.
+   IMPORTANT: the first submission triggers an activation email to the main address — click "Activate Form" once.
+   FormSubmit's AJAX endpoint only works when the page is served over http(s) (not by double-clicking the file). */
+const FORMSUBMIT_URL = 'https://formsubmit.co/ajax/hossin.rate@gmail.com';
+const FORMSUBMIT_CC  = 'enactusflshac@gmail.com';
 const form = document.getElementById('regForm'), btn = document.getElementById('submitBtn');
 form.addEventListener('submit', async e=>{
   e.preventDefault();
@@ -327,15 +316,24 @@ form.addEventListener('submit', async e=>{
 
   btn.disabled = true; btn.textContent = 'جار الإرسال...';
   try{
-    // Send to Google Form (see GOOGLE_FORM config below). no-cors => response is opaque, so success is assumed if no network error.
-    const body = new URLSearchParams();
-    body.append(GOOGLE_FORM.entries.fullName,   payload.fullName);
-    body.append(GOOGLE_FORM.entries.apogee,     payload.apogee);
-    body.append(GOOGLE_FORM.entries.department, payload.department);
-    body.append(GOOGLE_FORM.entries.artType,    payload.artType);
-    body.append(GOOGLE_FORM.entries.tools,      payload.tools.join('، '));
-    body.append(GOOGLE_FORM.entries.bio,        payload.bio);
-    await fetch(GOOGLE_FORM.action, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body});
+    const res = await fetch(FORMSUBMIT_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify({
+        _subject: 'تسجيل جديد - الأسبوع الجامعي للفن والثقافة',
+        _cc: FORMSUBMIT_CC,
+        _template: 'table',
+        _captcha: 'false',
+        'الاسم الكامل': payload.fullName,
+        'رقم أبوجي': payload.apogee,
+        'الشعبة': payload.department,
+        'نوع الفن': payload.artType,
+        'المواد والأدوات': payload.tools.join('، '),
+        'النبذة': payload.bio
+      })
+    });
+    const out = await res.json();
+    if(!res.ok || String(out.success)!=='true') throw new Error(out.message || 'FormSubmit error');
     console.log('Registration payload:', payload);
 
     document.getElementById('okName').textContent = payload.fullName.split(' ')[0];
