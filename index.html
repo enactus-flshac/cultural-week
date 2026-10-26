@@ -119,6 +119,14 @@
         <p class="msg">رقم أبوجي يتكون من 7 إلى 10 أرقام.</p>
       </div>
 
+      <!-- 2b. Phone number -->
+      <div class="field">
+        <label class="lbl" for="phone">رقم الهاتف</label>
+        <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="16" dir="ltr" style="text-align:right" placeholder="مثال: 0612345678">
+        <svg class="ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.4 1.8.7 2.7a2 2 0 01-.5 2.1L8.1 9.8a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.7.7a2 2 0 011.7 2z"/></svg>
+        <p class="msg">يرجى إدخال رقم هاتف صحيح (مثال: 0612345678 أو +212612345678).</p>
+      </div>
+
       <!-- 3. Department -->
       <div class="field">
         <label class="lbl" for="dept">الشعبة / المسلك الدراسي</label>
@@ -282,6 +290,7 @@ function validate(){
   const rules = [
     [f('fullName').closest('.field'), f('fullName').value.trim().length>=2],
     [f('apogee').closest('.field'),   /^\d{7,10}$/.test(f('apogee').value)],
+    [f('phone').closest('.field'),    /^(?:\+212|00212|0)[5-7]\d{8}$/.test(f('phone').value.replace(/[\s.-]/g,''))],
     [f('dept').closest('.field'),     !!f('dept').value],
     [f('typeBox'),                    !!typeInput.value && (typeInput.value!=='other' || f('otherArt').value.trim().length>=2)],
     [f('toolsBox'),                   tools.length>0],
@@ -308,6 +317,7 @@ form.addEventListener('submit', async e=>{
   const payload = {
     fullName: form.fullName.value.trim(),
     apogee:   form.apogee.value,
+    phone:    form.phone.value.replace(/[\s.-]/g,''),
     department: form.dept.value,
     artType:  typeInput.value==='other' ? form.otherArt.value.trim() : document.querySelector('.type-card.active').dataset.label,
     tools:    tools,                       // array of strings
@@ -330,6 +340,7 @@ form.addEventListener('submit', async e=>{
         _captcha: 'false',
         'الاسم الكامل': payload.fullName,
         'رقم أبوجي': payload.apogee,
+        'رقم الهاتف': payload.phone,
         'الشعبة': payload.department,
         'نوع الفن': payload.artType,
         'المواد والأدوات': payload.tools.join('، '),
