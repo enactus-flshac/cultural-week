@@ -39,14 +39,24 @@
   .field.err input,.field.err select,.field.err textarea{border-color:#e11d48;background:#fff1f2}
   .msg{color:#e11d48;font-size:.8rem;margin-top:.3rem;display:none}
   .field.err .msg,.err-box.err .msg{display:block}
-  label.lbl{display:block;font-weight:700;margin-bottom:.4rem;color:#0a1a3f}
+  label.lbl,span.lbl{display:block;font-weight:700;margin-bottom:.4rem;color:#0a1a3f}
 
   /* Art type selection cards */
   .type-card{cursor:pointer;border:2px solid #e2e8f0;border-radius:18px;padding:.9rem .5rem;text-align:center;
-    transition:all .25s;background:#f8fafc;user-select:none}
+    transition:all .25s;background:#f8fafc;user-select:none;position:relative}
   .type-card:hover{transform:translateY(-4px);border-color:#f5b81c}
-  .type-card.active{border-color:#1d4ed8;background:linear-gradient(135deg,#1d4ed8,#0a1a3f);color:#fff;transform:translateY(-4px) scale(1.04);box-shadow:0 14px 30px -10px rgba(29,78,216,.7)}
-  .type-card .em{font-size:1.9rem;display:block}
+  .type-card:focus-visible{outline:3px solid rgba(29,78,216,.45);outline-offset:3px}
+  .type-card.active{border-color:#60a5fa;background:linear-gradient(135deg,#1d4ed8,#0a1a3f);color:#fff;
+    animation:cardFloat 3.2s ease-in-out infinite, cardGlow 2.4s ease-in-out infinite;z-index:2}
+  /* one-shot "pop" when a card is picked */
+  .type-card.pop{animation:cardPop .5s cubic-bezier(.2,.9,.3,1.5), cardGlow 2.4s ease-in-out infinite}
+  @keyframes cardFloat{0%,100%{transform:translateY(-4px) scale(1.04)}50%{transform:translateY(-10px) scale(1.07)}}
+  @keyframes cardPop{0%{transform:scale(.92)}60%{transform:translateY(-8px) scale(1.1)}100%{transform:translateY(-4px) scale(1.04)}}
+  @keyframes cardGlow{
+    0%,100%{box-shadow:0 0 0 2px rgba(96,165,250,.9),0 0 18px 2px rgba(96,165,250,.55),0 0 38px 6px rgba(245,184,28,.25),0 16px 30px -10px rgba(29,78,216,.7)}
+    50%{box-shadow:0 0 0 3px rgba(245,184,28,.95),0 0 28px 6px rgba(245,184,28,.6),0 0 54px 12px rgba(96,165,250,.4),0 20px 36px -10px rgba(29,78,216,.8)}}
+  .type-card .em{font-size:1.9rem;display:block;transition:transform .35s}
+  .type-card.active .em{transform:scale(1.2) rotate(-6deg)}
   .type-card small{display:block;opacity:.7;font-size:.72rem;margin-top:.25rem;line-height:1.4}
 
   /* Tags */
@@ -54,12 +64,24 @@
   .tag button{font-weight:700;line-height:1}
   @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
 
-  /* Button with ripple + morph */
+  /* Button: ripple + morph + premium glow pulse */
   .btn{position:relative;overflow:hidden;border-radius:16px;background:linear-gradient(135deg,#f5b81c,#ff9d00);color:#0a1a3f;font-weight:700;
-    font-size:1.15rem;padding:1rem 2rem;transition:all .35s cubic-bezier(.2,.9,.3,1.4);box-shadow:0 12px 30px -10px rgba(245,184,28,.8)}
+    font-size:1.15rem;padding:1rem 2rem;transition:all .35s cubic-bezier(.2,.9,.3,1.4);
+    box-shadow:0 12px 30px -10px rgba(245,184,28,.8)}
+  .btn.pulse{animation:glowPulse 2.6s ease-in-out infinite}
+  .btn.pulse::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);
+    transform:translateX(120%);animation:shine 3.6s ease-in-out infinite;pointer-events:none}
+  @keyframes glowPulse{
+    0%,100%{box-shadow:0 12px 30px -10px rgba(245,184,28,.8),0 0 0 0 rgba(245,184,28,.45),0 0 16px 0 rgba(255,157,0,.35)}
+    50%{box-shadow:0 14px 34px -10px rgba(245,184,28,.95),0 0 0 11px rgba(245,184,28,0),0 0 34px 6px rgba(255,157,0,.55)}}
+  @keyframes shine{0%,55%{transform:translateX(120%)}100%{transform:translateX(-120%)}}
   .btn:hover{border-radius:40px;transform:translateY(-3px);letter-spacing:.04em}
-  .btn:disabled{opacity:.7;cursor:wait}
+  .btn:active{transform:translateY(0) scale(.98)}
+  .btn:disabled{opacity:.85;cursor:wait;animation:none}
+  .btn.sending{border-radius:40px;background:linear-gradient(135deg,#1d4ed8,#0a1a3f);color:#fff;box-shadow:0 0 28px 4px rgba(96,165,250,.55)}
+  .btn.done{border-radius:40px;background:linear-gradient(135deg,#22c55e,#15803d);color:#fff;box-shadow:0 0 34px 8px rgba(34,197,94,.55)}
   .ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.65);transform:scale(0);animation:rip .6s linear;pointer-events:none}
+  .ripple.wave{background:rgba(255,255,255,.5);animation:rip 1s cubic-bezier(.2,.7,.2,1)}
   @keyframes rip{to{transform:scale(4);opacity:0}}
 
   /* One orchestrated entrance: title letters */
@@ -69,8 +91,63 @@
   #confetti{position:fixed;inset:0;z-index:60;pointer-events:none}
   .modal{position:fixed;inset:0;z-index:50;background:rgba(7,19,48,.8);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:1rem}
   .modal.show{display:flex}
+  .modal{overflow-y:auto}
+  .modal.show .card{animation:pop .4s cubic-bezier(.2,.9,.3,1.3)}
 
-  @media (prefers-reduced-motion:reduce){.float-item,.hero-in{animation:none}.float-wrap{display:none}}
+
+  /* Sound toggle */
+  .sfx-btn{position:fixed;top:1rem;left:1rem;z-index:70;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+    background:rgba(255,255,255,.1);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.25);color:#f5b81c;cursor:pointer;
+    transition:transform .25s,background .25s,color .25s,box-shadow .25s}
+  .sfx-btn:hover{transform:scale(1.1);background:rgba(255,255,255,.18);box-shadow:0 0 18px rgba(245,184,28,.45)}
+  .sfx-btn:focus-visible{outline:3px solid rgba(96,165,250,.7);outline-offset:3px}
+  .sfx-btn.off{color:rgba(255,255,255,.55)}
+  .sfx-btn svg{width:22px;height:22px}
+
+  /* Secondary (navy) button */
+  .btn-alt{background:linear-gradient(135deg,#1d4ed8,#0a1a3f);color:#fff;box-shadow:0 12px 28px -10px rgba(29,78,216,.8)}
+  .btn-alt:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+  .btn-alt:disabled:hover{transform:none;border-radius:16px;letter-spacing:normal}
+
+  /* Live Artist Pass */
+  .pass-wrap{perspective:900px;max-width:340px;margin:0 auto}
+  .pass{position:relative;border-radius:28px;padding:3px;transform-style:preserve-3d;transition:transform .2s ease-out;
+    background:linear-gradient(135deg,#f5b81c,#1d4ed8 35%,#22d3ee 65%,#f5b81c);background-size:250% 250%;animation:borderFlow 7s linear infinite;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.7),0 0 44px -8px rgba(29,78,216,.7)}
+  @keyframes borderFlow{0%{background-position:0% 50%}100%{background-position:250% 50%}}
+  .pass-in{position:relative;overflow:hidden;border-radius:25px;text-align:center;padding:1.1rem 1.3rem 1.2rem;
+    background:radial-gradient(circle at 100% 0,rgba(29,78,216,.55),transparent 55%),radial-gradient(circle at 0 100%,rgba(245,184,28,.25),transparent 55%),linear-gradient(170deg,#0f2557,#071330)}
+  .pass-shine{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.12) 50%,transparent 65%);
+    transform:translateX(130%);animation:passShine 5s ease-in-out infinite}
+  @keyframes passShine{0%,60%{transform:translateX(130%)}100%{transform:translateX(-130%)}}
+  .pass-slot{width:70px;height:12px;border-radius:99px;margin:0 auto .9rem;background:#071330;border:2px solid rgba(255,255,255,.25)}
+  .pass-logo{display:inline-block;background:#fff;border-radius:14px;padding:.35rem .8rem}
+  .pass-logo img{height:40px;width:auto;display:block}
+  .pass-kicker{margin-top:.9rem;color:#f5b81c;font-weight:700;font-size:.8rem;letter-spacing:.35em}
+  .pass-title{font-size:1.9rem;line-height:1.2;font-weight:700}
+  .pass-sub{font-size:.85rem;color:rgba(255,255,255,.75)} .pass-sub b{color:#f5b81c}
+  .pass-dots{height:0;border-top:2px dotted rgba(255,255,255,.28);margin:.9rem 0}
+  .pass-lbl{font-size:.72rem;color:rgba(255,255,255,.5);margin-bottom:.15rem}
+  .pass-name{font-family:'Reem Kufi',serif;font-weight:700;font-size:1.9rem;line-height:1.25;min-height:2.6rem;margin-bottom:.8rem;
+    display:flex;align-items:center;justify-content:center;word-break:break-word;color:#fff;transition:color .3s}
+  .pass-name.empty{color:rgba(255,255,255,.3)}
+  .pass-name.bump{animation:bump .3s ease-out}
+  @keyframes bump{0%{transform:scale(.94);opacity:.6}100%{transform:none;opacity:1}}
+  .pass-chip{display:inline-flex;align-items:center;gap:.5rem;max-width:100%;padding:.5rem 1rem;border-radius:999px;
+    background:rgba(245,184,28,.15);border:1px solid #f5b81c;color:#f5b81c;font-weight:700;font-size:.9rem;transition:all .3s}
+  .pass-chip.empty{opacity:.5;border-style:dashed}
+  .barcode{height:36px;margin:1.1rem auto .6rem;width:80%;opacity:.8;
+    background:repeating-linear-gradient(90deg,#fff 0 2px,transparent 2px 5px,#fff 5px 6px,transparent 6px 9px,#fff 9px 12px,transparent 12px 14px)}
+  .pass-foot{display:flex;justify-content:space-between;font-size:.7rem;color:rgba(255,255,255,.6)}
+  .pass-foot span:last-child{direction:ltr;color:#f5b81c;font-weight:700}
+
+  @media (prefers-reduced-motion:reduce){.pass,.pass-shine,.pass-name.bump{animation:none}}
+
+  @media (prefers-reduced-motion:reduce){
+    .float-item,.hero-in,.btn.pulse,.btn.pulse::after,.type-card.active,.type-card.pop{animation:none}
+    .float-wrap{display:none}
+    .type-card.active{transform:translateY(-4px) scale(1.04);box-shadow:0 0 0 3px #f5b81c,0 0 24px 4px rgba(245,184,28,.5)}
+  }
 </style>
 </head>
 <body class="min-h-screen relative">
@@ -82,6 +159,12 @@
 
 <!-- Floating art elements (data-depth controls parallax strength) -->
 <div id="floaters"></div>
+
+<!-- Sound toggle -->
+<button id="sfxToggle" type="button" class="sfx-btn" aria-pressed="true" aria-label="كتم الصوت" title="تشغيل / كتم المؤثرات الصوتية">
+  <svg id="icOn" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></svg>
+  <svg id="icOff" class="hidden" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M23 9l-6 6M17 9l6 6"/></svg>
+</button>
 
 <main class="relative z-10 max-w-3xl mx-auto px-4 py-10 sm:py-16">
 
@@ -150,15 +233,15 @@
       <!-- 4. Art type (selection cards) -->
       <div id="typeBox" class="err-box">
         <span class="lbl">نوع الفن أو الموهبة</span>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="typeGrid">
-          <div class="type-card" data-value="visual" data-label="الفنون التشكيلية والبصرية" tabindex="0" role="radio"><span class="em">🎨</span><b class="text-sm">الفنون التشكيلية والبصرية</b><small>الرسم، الصباغة، النحت، الخط العربي</small></div>
-          <div class="type-card" data-value="recycle" data-label="إعادة التدوير والابتكار البيئي" tabindex="0" role="radio"><span class="em">♻️</span><b class="text-sm">إعادة التدوير والابتكار البيئي</b><small>مجسمات ولوحات وديكورات من مواد معاد تدويرها</small></div>
-          <div class="type-card" data-value="music" data-label="الفنون الموسيقية" tabindex="0" role="radio"><span class="em">🎵</span><b class="text-sm">الفنون الموسيقية</b><small>العزف المنفرد، الغناء، المجموعات الصوتية</small></div>
-          <div class="type-card" data-value="theater" data-label="الفنون المسرحية والدرامية" tabindex="0" role="radio"><span class="em">🎭</span><b class="text-sm">الفنون المسرحية والدرامية</b><small>التجسيد المسرحي، المونودراما، الكوميديا الارتجالية</small></div>
-          <div class="type-card" data-value="cinema" data-label="الفنون السينمائية والتصوير" tabindex="0" role="radio"><span class="em">🎬</span><b class="text-sm">الفنون السينمائية والتصوير</b><small>الأفلام القصيرة، التصوير الفوتوغرافي، المونتاج</small></div>
-          <div class="type-card" data-value="literature" data-label="الأدب والشعر" tabindex="0" role="radio"><span class="em">✒️</span><b class="text-sm">الأدب والشعر</b><small>إلقاء الشعر، الزجل، القصة القصيرة، كتابة النصوص</small></div>
-          <div class="type-card" data-value="performance" data-label="الأداء الجسدي والتعبير الحركي" tabindex="0" role="radio"><span class="em">💃</span><b class="text-sm">الأداء الجسدي والتعبير الحركي</b><small>الرقص التعبيري، البانتوميم، البهلوانات</small></div>
-          <div class="type-card" data-value="other" data-label="أخرى" tabindex="0" role="radio"><span class="em">✨</span><b class="text-sm">أخرى</b><small>فن آخر غير مدرج في القائمة</small></div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="typeGrid" role="radiogroup">
+          <div class="type-card" data-value="visual" data-label="الفنون التشكيلية والبصرية" tabindex="0" role="radio" aria-checked="false"><span class="em">🎨</span><b class="text-sm">الفنون التشكيلية والبصرية</b><small>الرسم، الصباغة، النحت، الخط العربي</small></div>
+          <div class="type-card" data-value="recycle" data-label="إعادة التدوير والابتكار البيئي" tabindex="0" role="radio" aria-checked="false"><span class="em">♻️</span><b class="text-sm">إعادة التدوير والابتكار البيئي</b><small>مجسمات ولوحات وديكورات من مواد معاد تدويرها</small></div>
+          <div class="type-card" data-value="music" data-label="الفنون الموسيقية" tabindex="0" role="radio" aria-checked="false"><span class="em">🎵</span><b class="text-sm">الفنون الموسيقية</b><small>العزف المنفرد، الغناء، المجموعات الصوتية</small></div>
+          <div class="type-card" data-value="theater" data-label="الفنون المسرحية والدرامية" tabindex="0" role="radio" aria-checked="false"><span class="em">🎭</span><b class="text-sm">الفنون المسرحية والدرامية</b><small>التجسيد المسرحي، المونودراما، الكوميديا الارتجالية</small></div>
+          <div class="type-card" data-value="cinema" data-label="الفنون السينمائية والتصوير" tabindex="0" role="radio" aria-checked="false"><span class="em">🎬</span><b class="text-sm">الفنون السينمائية والتصوير</b><small>الأفلام القصيرة، التصوير الفوتوغرافي، المونتاج</small></div>
+          <div class="type-card" data-value="literature" data-label="الأدب والشعر" tabindex="0" role="radio" aria-checked="false"><span class="em">✒️</span><b class="text-sm">الأدب والشعر</b><small>إلقاء الشعر، الزجل، القصة القصيرة، كتابة النصوص</small></div>
+          <div class="type-card" data-value="performance" data-label="الأداء الجسدي والتعبير الحركي" tabindex="0" role="radio" aria-checked="false"><span class="em">💃</span><b class="text-sm">الأداء الجسدي والتعبير الحركي</b><small>الرقص التعبيري، البانتوميم، البهلوانات</small></div>
+          <div class="type-card" data-value="other" data-label="أخرى" tabindex="0" role="radio" aria-checked="false"><span class="em">✨</span><b class="text-sm">أخرى</b><small>فن آخر غير مدرج في القائمة</small></div>
           </div>
         <div id="otherWrap" class="field mt-4" style="display:none"><input id="otherArt" name="otherArt" type="text" placeholder="اكتب نوع فنك أو موهبتك" style="padding-right:1rem"></div>
         <input type="hidden" id="artType" name="artType">
@@ -183,9 +266,18 @@
         <div class="flex justify-between"><p class="msg">اكتب نبذة من 20 حرفا على الأقل.</p><span id="count" class="text-xs text-slate-400 mt-1">0 / 500</span></div>
       </div>
 
+      <!-- 7. Work link (optional) -->
+      <div class="field" id="linkField">
+        <label class="lbl" for="sampleLink">رابط لعرض عملك الفني (اختياري)</label>
+        <input id="sampleLink" name="sampleLink" type="url" inputmode="url" autocomplete="url" dir="ltr" style="text-align:right" placeholder="مثلاً: رابط Google Drive، YouTube، Instagram، أو Behance...">
+        <svg class="ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg>
+        <p class="msg">يرجى إدخال رابط صحيح (مثال: https://youtube.com/...) أو اترك الحقل فارغا.</p>
+        <p class="text-xs text-slate-400 mt-1.5">ليس لديك رابط جاهز؟ لا مشكلة! هذا الحقل اختياري ويمكنك تجاوزه.</p>
+      </div>
+
       <p id="formError" class="hidden rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm p-3" role="alert"></p>
 
-      <button type="submit" id="submitBtn" class="btn w-full">أرسل مشاركتي 🎨</button>
+      <button type="submit" id="submitBtn" class="btn pulse w-full">أرسل مشاركتي 🎨</button>
     </form>
   </section>
 
@@ -194,12 +286,34 @@
   </footer>
 </main>
 
-<!-- Success modal -->
-<div id="modal" class="modal" role="dialog" aria-modal="true">
-  <div class="card max-w-md w-full p-8 text-center">
-    <div class="text-6xl mb-3">🎉</div>
-    <h3 class="font-display text-2xl text-navy font-bold mb-2">تم تسجيل مشاركتك!</h3>
-    <p class="text-slate-600 mb-6">شكرا <span id="okName" class="font-bold text-royal"></span>، سنتواصل معك قريبا لتأكيد برنامج مشاركتك.</p>
+<!-- Success modal: shows the participant's pass -->
+<div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="okTitle">
+  <div class="card max-w-md w-full p-6 sm:p-8 text-center my-auto">
+    <div class="text-5xl mb-2">🎉</div>
+    <h3 id="okTitle" class="font-display text-2xl text-navy font-bold mb-1">تم تسجيل مشاركتك!</h3>
+    <p class="text-slate-600 mb-5">شكرا <span id="okName" class="font-bold text-royal"></span>، سنتواصل معك قريبا لتأكيد برنامج مشاركتك. هذه بطاقة مشاركتك 👇</p>
+
+    <div class="pass-wrap" id="passWrap">
+      <div class="pass" id="passCard">
+        <div class="pass-in">
+          <div class="pass-shine"></div>
+          <div class="pass-slot"></div>
+          <div class="pass-logo"><img id="passLogo" alt="Enactus FLSH Ain Chock"></div>
+          <p class="pass-kicker">ARTIST PASS</p>
+          <h3 class="pass-title font-display">بطاقة المشارك</h3>
+          <p class="pass-sub">الأسبوع الجامعي للفن والثقافة <b>2026</b></p>
+          <div class="pass-dots"></div>
+          <p class="pass-lbl">الاسم</p>
+          <div id="passName" class="pass-name"></div>
+          <p class="pass-lbl">نوع الفن</p>
+          <div id="passChip" class="pass-chip"><span id="passEmoji">🎨</span><span id="passType"></span></div>
+          <div class="barcode" aria-hidden="true"></div>
+          <div class="pass-foot"><span>نادي Enactus FLSH Ain Chock</span><span id="passNo">N° 0000</span></div>
+        </div>
+      </div>
+    </div>
+
+    <button id="dlModal" class="btn btn-alt w-full mt-6 mb-3">⬇ تحميل بطاقتي (PNG)</button>
     <button id="closeModal" class="btn w-full">إغلاق</button>
   </div>
 </div>
@@ -207,6 +321,50 @@
 <canvas id="confetti"></canvas>
 
 <script>
+/* ---------- 0. Micro sound effects (Web Audio API, no files) ---------- */
+const sfx = (()=>{
+  let ctx = null, muted = false;
+  try{ muted = localStorage.getItem('sfxMuted')==='1'; }catch(_){}
+  const get = ()=>{
+    if(muted) return null;
+    try{
+      if(!ctx){ const C = window.AudioContext||window.webkitAudioContext; if(!C) return null; ctx = new C(); }
+      if(ctx.state==='suspended') ctx.resume();
+      return ctx;
+    }catch(_){ return null; }
+  };
+  function tone(c,{f=440,to=null,t=0,d=.15,type='sine',v=.08}){
+    const o=c.createOscillator(), g=c.createGain(), n=c.currentTime+t;
+    o.type=type; o.frequency.setValueAtTime(f,n);
+    if(to) o.frequency.exponentialRampToValueAtTime(to,n+d);
+    g.gain.setValueAtTime(.0001,n); g.gain.exponentialRampToValueAtTime(v,n+.012); g.gain.exponentialRampToValueAtTime(.0001,n+d);
+    o.connect(g).connect(c.destination); o.start(n); o.stop(n+d+.03);
+  }
+  const play = fn => ()=>{ const c=get(); if(c) fn(c); };
+  return {
+    pop:   play(c=>{ tone(c,{f:420,to:880,d:.11,v:.09}); tone(c,{f:1320,t:.04,d:.08,v:.025,type:'triangle'}); }),
+    click: play(c=>tone(c,{f:260,to:170,d:.06,type:'triangle',v:.07})),
+    tick:  play(c=>tone(c,{f:900,to:700,d:.05,v:.04})),
+    nope:  play(c=>tone(c,{f:220,to:160,d:.16,type:'triangle',v:.06})),
+    chime: play(c=>{
+      [523.25,659.25,783.99,1046.5].forEach((f,i)=>{ tone(c,{f,t:i*.1,d:.55,v:.07}); tone(c,{f:f*2,t:i*.1,d:.35,v:.018,type:'triangle'}); });
+      tone(c,{f:1318.5,t:.45,d:.8,v:.05});
+    }),
+    toggle(){ muted=!muted; try{localStorage.setItem('sfxMuted',muted?'1':'0')}catch(_){} if(!muted) this.pop(); return muted; },
+    get muted(){ return muted; }
+  };
+})();
+const sfxBtn = document.getElementById('sfxToggle');
+function renderMute(){
+  const m = sfx.muted;
+  sfxBtn.classList.toggle('off', m); sfxBtn.setAttribute('aria-pressed', String(!m));
+  sfxBtn.setAttribute('aria-label', m ? 'تشغيل الصوت' : 'كتم الصوت');
+  document.getElementById('icOn').classList.toggle('hidden', m);
+  document.getElementById('icOff').classList.toggle('hidden', !m);
+}
+sfxBtn.addEventListener('click',()=>{ sfx.toggle(); renderMute(); });
+renderMute();
+
 /* ---------- 1. Floating elements + mouse parallax ---------- */
 const icons = ['🎵','🎭','📷','🎨','🖌️','🎬','✒️','🎻','🎶','🖼️'];
 const floaters = document.getElementById('floaters');
@@ -228,22 +386,32 @@ document.addEventListener('mousemove', e=>{
 });
 
 /* ---------- 2. Ripple effect on buttons ---------- */
-document.addEventListener('click', e=>{
-  const b = e.target.closest('.btn'); if(!b) return;
+function makeRipple(b, x, y, extra){
   const r = b.getBoundingClientRect(), s = Math.max(r.width,r.height);
   const sp = document.createElement('span');
-  sp.className = 'ripple';
-  sp.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;
-  b.appendChild(sp); setTimeout(()=>sp.remove(),600);
+  sp.className = 'ripple' + (extra ? ' '+extra : '');
+  sp.style.cssText = `width:${s}px;height:${s}px;left:${x-r.left-s/2}px;top:${y-r.top-s/2}px`;
+  b.appendChild(sp); setTimeout(()=>sp.remove(), 1100);
+}
+document.addEventListener('click', e=>{
+  const b = e.target.closest('.btn'); if(!b || b.disabled) return;
+  sfx.click();
+  // keyboard-triggered clicks have clientX = 0: ripple from the button centre instead
+  const r = b.getBoundingClientRect();
+  const x = e.clientX || r.left + r.width/2, y = e.clientY || r.top + r.height/2;
+  makeRipple(b, x, y);
 });
 
 /* ---------- 3. Art type cards ---------- */
 const typeInput = document.getElementById('artType');
 const cards = document.querySelectorAll('.type-card');
 function pick(c){
-  cards.forEach(x=>{x.classList.remove('active');x.setAttribute('aria-checked','false')});
-  c.classList.add('active'); c.setAttribute('aria-checked','true');
+  cards.forEach(x=>{x.classList.remove('active','pop');x.setAttribute('aria-checked','false')});
+  void c.offsetWidth;                                   // restart the pop animation
+  c.classList.add('active','pop'); c.setAttribute('aria-checked','true');
+  setTimeout(()=>c.classList.remove('pop'), 520);       // then fall back to float + glow loop
   typeInput.value = c.dataset.value;
+  sfx.pop();
   const ow=document.getElementById('otherWrap'); ow.style.display = c.dataset.value==='other' ? 'block' : 'none';
   if(c.dataset.value==='other') document.getElementById('otherArt').focus();
   document.getElementById('typeBox').classList.remove('err');
@@ -268,7 +436,7 @@ function renderTags(){
 }
 function addTool(){
   const v = toolInput.value.replace(/[،,]/g,'').trim();
-  if(v && !tools.includes(v)){ tools.push(v); renderTags(); document.getElementById('toolsBox').classList.remove('err'); }
+  if(v && !tools.includes(v)){ tools.push(v); renderTags(); sfx.tick(); document.getElementById('toolsBox').classList.remove('err'); }
   toolInput.value='';
 }
 toolInput.addEventListener('keydown',e=>{
@@ -284,9 +452,97 @@ document.querySelectorAll('.field input,.field select,.field textarea').forEach(
   el.addEventListener('input',()=>el.closest('.field').classList.remove('err')));
 document.getElementById('apogee').addEventListener('input',e=>e.target.value = e.target.value.replace(/\D/g,''));
 
+/* ---------- 5c. Artist Pass (shown after a successful submission) ---------- */
+const passNo = String(Math.floor(Math.random()*9000)+1000);          // decorative pass number
+document.getElementById('passLogo').src = document.querySelector('header img').src;
+let lastPass = null;
+
+function getPassData(){
+  const act = document.querySelector('.type-card.active');
+  const other = !!act && act.dataset.value==='other';
+  const label = !act ? '' : other ? (document.getElementById('otherArt').value.trim() || 'أخرى') : act.dataset.label;
+  return { name: document.getElementById('fullName').value.trim().replace(/\s+/g,' '), label,
+           emoji: act ? act.querySelector('.em').textContent : '🎨', no: passNo };
+}
+function fillPass(d){
+  const n = document.getElementById('passName');
+  n.textContent = d.name;
+  n.style.fontSize = d.name.length>26 ? '1.3rem' : d.name.length>16 ? '1.6rem' : '';
+  document.getElementById('passEmoji').textContent = d.emoji;
+  document.getElementById('passType').textContent = d.label;
+  document.getElementById('passNo').textContent = 'N° '+d.no;
+}
+
+// --- draw the pass on a canvas (900x1400) and download it ---
+function rr(x,a,b,w,h,r){ x.beginPath(); x.moveTo(a+r,b); x.arcTo(a+w,b,a+w,b+h,r); x.arcTo(a+w,b+h,a,b+h,r); x.arcTo(a,b+h,a,b,r); x.arcTo(a,b,a+w,b,r); x.closePath(); }
+function wrapLines(x,text,maxW){
+  const words = text.split(' '), lines = []; let cur = '';
+  words.forEach(w=>{ const t = cur ? cur+' '+w : w; if(x.measureText(t).width>maxW && cur){ lines.push(cur); cur=w; } else cur=t; });
+  if(cur) lines.push(cur); return lines.slice(0,3);
+}
+async function drawPass(d){
+  try{ await Promise.all([document.fonts.load('700 64px "Reem Kufi"'), document.fonts.load('500 32px Tajawal'), document.fonts.load('700 32px Tajawal')]); }catch(_){}
+  const W=900, H=1400, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const x = cv.getContext('2d'); x.direction='rtl'; x.textAlign='center'; x.textBaseline='middle';
+  // gradient border + body
+  let g = x.createLinearGradient(0,0,W,H);
+  g.addColorStop(0,'#f5b81c'); g.addColorStop(.4,'#1d4ed8'); g.addColorStop(.7,'#22d3ee'); g.addColorStop(1,'#f5b81c');
+  rr(x,0,0,W,H,70); x.fillStyle=g; x.fill();
+  g = x.createLinearGradient(0,0,0,H); g.addColorStop(0,'#0f2557'); g.addColorStop(1,'#071330');
+  rr(x,8,8,W-16,H-16,62); x.fillStyle=g; x.fill();
+  x.save(); rr(x,8,8,W-16,H-16,62); x.clip();
+  g = x.createRadialGradient(W,0,0,W,0,560); g.addColorStop(0,'rgba(29,78,216,.6)'); g.addColorStop(1,'rgba(29,78,216,0)'); x.fillStyle=g; x.fillRect(0,0,W,H);
+  g = x.createRadialGradient(0,H,0,0,H,520); g.addColorStop(0,'rgba(245,184,28,.3)'); g.addColorStop(1,'rgba(245,184,28,0)'); x.fillStyle=g; x.fillRect(0,0,W,H);
+  x.restore();
+  // lanyard slot
+  rr(x,W/2-70,46,140,24,12); x.fillStyle='rgba(0,0,0,.45)'; x.fill(); x.strokeStyle='rgba(255,255,255,.3)'; x.lineWidth=3; x.stroke();
+  // logo pill
+  const logo = document.querySelector('header img');
+  rr(x,W/2-250,110,500,220,40); x.fillStyle='#fff'; x.fill();
+  try{ x.drawImage(logo, W/2-190, 140, 380, 160); }catch(_){}
+  // titles
+  x.fillStyle='#f5b81c'; x.font='700 44px Tajawal'; if('letterSpacing' in x) x.letterSpacing='12px'; x.fillText('ARTIST PASS', W/2, 420); if('letterSpacing' in x) x.letterSpacing='0px';
+  x.fillStyle='#fff'; x.font='700 80px "Reem Kufi"'; x.fillText('بطاقة المشارك', W/2, 510);
+  x.fillStyle='rgba(255,255,255,.8)'; x.font='500 38px Tajawal'; x.fillText('الأسبوع الجامعي للفن والثقافة', W/2, 592);
+  x.fillStyle='#f5b81c'; x.font='700 40px Tajawal'; x.fillText('2026', W/2, 646);
+  x.fillStyle='rgba(255,255,255,.3)'; for(let i=90;i<W-90;i+=22){ x.beginPath(); x.arc(i,706,3,0,7); x.fill(); }
+  // name
+  x.fillStyle='rgba(255,255,255,.55)'; x.font='500 30px Tajawal'; x.fillText('الاسم', W/2, 766);
+  const nm = d.name || 'اسمك الكامل', size = nm.length>26 ? 60 : nm.length>16 ? 72 : 88;
+  x.font=`700 ${size}px "Reem Kufi"`; x.fillStyle = d.name ? '#fff' : 'rgba(255,255,255,.3)';
+  const lines = wrapLines(x,nm,W-180), lh = size*1.3, y0 = 900 - (lines.length-1)*lh/2;
+  lines.forEach((l,i)=>x.fillText(l, W/2, y0+i*lh));
+  // art type chip
+  x.fillStyle='rgba(255,255,255,.55)'; x.font='500 30px Tajawal'; x.fillText('نوع الفن', W/2, 1046);
+  const txt = `${d.emoji}  ${d.label||'—'}`; let fs=42;
+  do{ x.font=`700 ${fs}px Tajawal`; fs-=2; }while(x.measureText(txt).width > W-240 && fs>22);
+  const cw = x.measureText(txt).width+80;
+  rr(x,W/2-cw/2,1085,cw,90,45); x.fillStyle='rgba(245,184,28,.16)'; x.fill(); x.strokeStyle='#f5b81c'; x.lineWidth=3; x.stroke();
+  x.fillStyle='#f5b81c'; x.fillText(txt, W/2, 1131);
+  // barcode (decorative, seeded by pass number)
+  let seed = +d.no, bx = 150; x.fillStyle='rgba(255,255,255,.85)';
+  while(bx < W-150){ seed = (seed*9301+49297)%233280; const bw = 3+Math.floor(seed/233280*8); x.fillRect(bx,1220,bw,60); bx += bw + 4 + Math.floor((seed%7)/2); }
+  // footer
+  x.fillStyle='rgba(255,255,255,.6)'; x.font='500 30px Tajawal'; x.fillText('N° '+d.no, W/2, 1318);
+  x.fillStyle='#f5b81c'; x.font='700 34px Tajawal'; x.fillText('نادي Enactus FLSH Ain Chock', W/2, 1360);
+  return cv;
+}
+async function downloadPass(d){
+  const cv = await drawPass(d);
+  cv.toBlob(b=>{
+    if(!b) return;
+    const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'artist-pass-2026.png';
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+  },'image/png');
+}
+document.getElementById('dlModal').addEventListener('click', ()=>{ if(lastPass) downloadPass(lastPass); });
+
 /* ---------- 6. Validation ---------- */
+const LINK_RE = /^https?:\/\/[^\s.]+\.[^\s]{2,}$/i;
+function normLink(v){ v = v.trim(); return v && !/^https?:\/\//i.test(v) ? 'https://'+v : v; }
 function validate(){
   const f = id=>document.getElementById(id);
+  const link = normLink(f('sampleLink').value);
   const rules = [
     [f('fullName').closest('.field'), f('fullName').value.trim().length>=2],
     [f('apogee').closest('.field'),   /^\d{7,10}$/.test(f('apogee').value)],
@@ -295,23 +551,28 @@ function validate(){
     [f('typeBox'),                    !!typeInput.value && (typeInput.value!=='other' || f('otherArt').value.trim().length>=2)],
     [f('toolsBox'),                   tools.length>0],
     [f('bio').closest('.field'),      f('bio').value.trim().length>=20],
+    [f('linkField'),                  !link || LINK_RE.test(link)],   // optional: validated only if filled
   ];
   let ok = true, first = null;
   rules.forEach(([el,valid])=>{ el.classList.toggle('err',!valid); if(!valid){ok=false; first = first||el} });
   if(first) first.scrollIntoView({behavior:'smooth',block:'center'});
+  if(!ok) sfx.nope();
   return ok;
 }
 
 /* ---------- 7. Submit via FormSubmit.co (emails the registration) ----------
    Main address receives the email, the second one is added as CC.
    IMPORTANT: the first submission triggers an activation email to the main address — click "Activate Form" once.
-   FormSubmit's AJAX endpoint only works when the page is served over http(s) (not by double-clicking the file). */
+   FormSubmit's AJAX endpoint only works when the page is served over http(s) (not by double-clicking the file).
+   The optional work link is sent together with the other fields. */
 const FORMSUBMIT_URL = 'https://formsubmit.co/ajax/hossin.rate@gmail.com';
 const FORMSUBMIT_CC  = 'enactusflshac@gmail.com';
 const form = document.getElementById('regForm'), btn = document.getElementById('submitBtn');
+const wait = ms => new Promise(r=>setTimeout(r,ms));
 form.addEventListener('submit', async e=>{
   e.preventDefault();
   if(!validate()) return;
+  lastPass = getPassData();       // snapshot for the download button (form is reset after success)
 
   // Payload ready to send to your API
   const payload = {
@@ -322,13 +583,16 @@ form.addEventListener('submit', async e=>{
     artType:  typeInput.value==='other' ? form.otherArt.value.trim() : document.querySelector('.type-card.active').dataset.label,
     tools:    tools,                       // array of strings
     bio:      bio.value.trim(),
+    sampleLink: normLink(form.sampleLink.value),   // optional ('' if empty)
     event:    'university-week-art-culture-2026',
     submittedAt: new Date().toISOString()
   };
 
   const errBox = document.getElementById('formError'); errBox.classList.add('hidden');
-  btn.disabled = true; btn.textContent = 'جار الإرسال...';
-  const ctrl = new AbortController(); const timer = setTimeout(()=>ctrl.abort(), 20000);  // stop waiting after 20s
+  btn.disabled = true; btn.classList.remove('pulse'); btn.classList.add('sending');
+  btn.textContent = 'جار الإرسال...';
+  const ctrl = new AbortController(); const timer = setTimeout(()=>ctrl.abort(), 20000);
+  let success = false;
   try{
     const res = await fetch(FORMSUBMIT_URL, {
       method:'POST', signal: ctrl.signal,
@@ -344,18 +608,28 @@ form.addEventListener('submit', async e=>{
         'الشعبة': payload.department,
         'نوع الفن': payload.artType,
         'المواد والأدوات': payload.tools.join('، '),
-        'النبذة': payload.bio
+        'النبذة': payload.bio,
+        'رابط العمل': payload.sampleLink || 'لم يُدخل رابط'
       })
     });
     const out = await res.json();
     if(!res.ok || String(out.success)!=='true') throw new Error(out.message || 'FormSubmit error');
     console.log('Registration payload:', payload);
+    success = true; sfx.chime();
+
+    // Fluid success wave on the button, then the success state
+    btn.classList.remove('sending'); btn.classList.add('done'); btn.textContent = '✓ تم الإرسال';
+    const r = btn.getBoundingClientRect();
+    makeRipple(btn, r.left + r.width/2, r.top + r.height/2, 'wave');
+    setTimeout(()=>makeRipple(btn, r.left + r.width/2, r.top + r.height/2, 'wave'), 220);
+    await wait(750);
 
     document.getElementById('okName').textContent = payload.fullName.split(' ')[0];
+    fillPass(lastPass);
     document.getElementById('modal').classList.add('show');
     paintBurst();
     form.reset(); tools.length=0; renderTags();
-    cards.forEach(c=>c.classList.remove('active')); typeInput.value=''; document.getElementById('otherWrap').style.display='none';
+    cards.forEach(c=>{c.classList.remove('active','pop');c.setAttribute('aria-checked','false')}); typeInput.value=''; document.getElementById('otherWrap').style.display='none';
     document.getElementById('count').textContent='0 / 500';
   }catch(err){
     errBox.textContent = err.name==='AbortError'
@@ -364,7 +638,8 @@ form.addEventListener('submit', async e=>{
     errBox.classList.remove('hidden');
   }finally{
     clearTimeout(timer);
-    btn.disabled=false; btn.textContent='أرسل مشاركتي 🎨';
+    btn.disabled=false; btn.classList.remove('sending','done'); btn.classList.add('pulse');
+    btn.textContent='أرسل مشاركتي 🎨';
   }
 });
 document.getElementById('closeModal').onclick = ()=>document.getElementById('modal').classList.remove('show');
