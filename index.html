@@ -136,26 +136,28 @@
   .pass-chip{display:inline-flex;align-items:center;gap:.5rem;max-width:100%;padding:.5rem 1rem;border-radius:999px;
     background:rgba(245,184,28,.15);border:1px solid #f5b81c;color:#f5b81c;font-weight:700;font-size:.9rem;transition:all .3s}
   .pass-chip.empty{opacity:.5;border-style:dashed}
-  .pass-qr{display:flex;align-items:center;justify-content:center;gap:.9rem;margin:1.1rem 0 .3rem;text-decoration:none;color:#fff}
-  .pass-qr-box{display:block;width:96px;height:96px;flex-shrink:0;background:#fff;border-radius:14px;padding:3px;
-    box-shadow:0 0 0 2px rgba(245,184,28,.7),0 10px 22px -8px #000;transition:transform .25s}
-  .pass-qr:hover .pass-qr-box{transform:scale(1.05) rotate(-2deg)}
+  .pass-bottom{display:flex;align-items:center;justify-content:space-between;gap:.8rem}
+  .pass-info{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:.5rem}
+  .pass-qr{display:flex;flex-direction:column;align-items:center;gap:.4rem;flex-shrink:0;text-decoration:none;color:#fff}
+  .pass-qr-box{display:block;width:100px;height:100px;background:#fff;border-radius:14px;padding:3px;
+    box-shadow:0 0 0 2px rgba(245,184,28,.75),0 0 18px rgba(245,184,28,.35),0 10px 22px -8px #000;transition:transform .25s}
+  .pass-qr:hover .pass-qr-box{transform:scale(1.06) rotate(-2deg)}
   .pass-qr-box svg{display:block;width:100%;height:100%}
-  .pass-qr-txt{font-size:.8rem;line-height:1.7;color:rgba(255,255,255,.78);text-align:right}
-  .pass-qr-txt b{color:#f5b81c;font-size:.95rem}
+  .pass-qr-mini{font-size:.68rem;font-weight:700;color:#f5b81c;white-space:nowrap}
   .pass-social{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap}
   .pass-ico{width:32px;height:32px;border-radius:50%;border:1px solid rgba(245,184,28,.75);display:grid;place-items:center;color:#f5b81c;transition:all .25s}
   .pass-ico:hover{background:#f5b81c;color:#0a1a3f;transform:translateY(-2px)}
   .pass-ico svg{width:16px;height:16px}
-  .pass-handle{direction:ltr;unicode-bidi:isolate;color:#f5b81c;font-weight:700;font-size:1rem;text-decoration:none;letter-spacing:.01em}
+  .pass-handle{direction:ltr;unicode-bidi:isolate;color:#f5b81c;font-weight:700;font-size:.95rem;text-decoration:none;letter-spacing:.01em}
   .pass-handle:hover{text-decoration:underline}
-  .pass-meta{margin-top:.7rem;font-size:.68rem;color:rgba(255,255,255,.55)}
+  .pass-meta{font-size:.68rem;line-height:1.7;color:rgba(255,255,255,.6)}
   .pass-meta b{display:inline-block;direction:ltr;color:#f5b81c}
 
   /* Popup follow buttons */
   .btn-ig{background:linear-gradient(45deg,#f09433,#e6683c 30%,#dc2743 60%,#bc1888);color:#fff;box-shadow:0 12px 26px -10px rgba(220,39,67,.8)}
   .btn-solo{background:linear-gradient(135deg,#0ea5e9,#1d4ed8);color:#fff;box-shadow:0 12px 26px -10px rgba(29,78,216,.8)}
   .btn-ig:hover,.btn-solo:hover{letter-spacing:normal}
+  a.btn{text-decoration:none}
 
   @media (prefers-reduced-motion:reduce){.pass,.pass-shine,.pass-name.bump{animation:none}}
 
@@ -323,27 +325,31 @@
           <div id="passName" class="pass-name"></div>
           <p class="pass-lbl">نوع الفن</p>
           <div id="passChip" class="pass-chip"><span id="passEmoji">🎨</span><span id="passType"></span></div>
-          <a class="pass-qr" href="https://solo.to/enactus.flshac" target="_blank" rel="noopener noreferrer" aria-label="تصفح روابط النادي">
-            <span id="passQR" class="pass-qr-box" aria-hidden="true"></span>
-            <span class="pass-qr-txt"><b>امسح الكود</b><br>لتصفح روابط النادي 🔗</span>
-          </a>
-          <div class="pass-dots"></div>
-          <div class="pass-social">
-            <a class="pass-ico" href="https://www.instagram.com/enactusflshac?mdxt=dmhwdmE3N3Q0OWsw" target="_blank" rel="noopener noreferrer" aria-label="إنستغرام"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg></a>
-            <a class="pass-ico" href="https://solo.to/enactus.flshac" target="_blank" rel="noopener noreferrer" aria-label="روابط النادي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg></a>
-            <a class="pass-handle" href="https://www.instagram.com/enactusflshac?mdxt=dmhwdmE3N3Q0OWsw" target="_blank" rel="noopener noreferrer">@enactusflshac</a>
+          <div class="pass-dots" style="margin-top:1.1rem"></div>
+          <div class="pass-bottom">
+            <div class="pass-info">
+              <div class="pass-social">
+                <a class="pass-ico" href="https://www.instagram.com/enactusflshac?mdxt=dmhwdmE3N3Q0OWsw" target="_blank" rel="noopener noreferrer" aria-label="إنستغرام"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg></a>
+                <a class="pass-ico" href="https://solo.to/enactus.flshac" target="_blank" rel="noopener noreferrer" aria-label="روابط النادي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg></a>
+              </div>
+              <a class="pass-handle" href="https://www.instagram.com/enactusflshac?mdxt=dmhwdmE3N3Q0OWsw" target="_blank" rel="noopener noreferrer">@enactusflshac</a>
+              <p class="pass-meta">نادي Enactus FLSH Ain Chock<br><b id="passNo">N° 0000</b></p>
+            </div>
+            <a class="pass-qr" href="https://solo.to/enactus.flshac" target="_blank" rel="noopener noreferrer" aria-label="امسحني للمزيد: روابط النادي">
+              <span id="passQR" class="pass-qr-box" aria-hidden="true"></span>
+              <span class="pass-qr-mini">امسحني للمزيد 🔗</span>
+            </a>
           </div>
-          <p class="pass-meta">نادي Enactus FLSH Ain Chock · <b id="passNo">N° 0000</b></p>
         </div>
       </div>
     </div>
 
     <button id="dlModal" class="btn btn-alt w-full mt-6">⬇ تحميل بطاقتي (PNG)</button>
-    <p id="afterDl" class="hidden text-sm font-bold text-emerald-600 mt-3">✓ تم حفظ بطاقتك! لا تنسَ متابعتنا 💛</p>
-    <div id="follow" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-      <a href="https://www.instagram.com/enactusflshac?mdxt=dmhwdmE3N3Q0OWsw" target="_blank" rel="noopener noreferrer" class="btn btn-ig block text-center !px-3 !py-3 !text-base">تابعنا على إنستغرام 📸</a>
-      <a href="https://solo.to/enactus.flshac" target="_blank" rel="noopener noreferrer" class="btn btn-solo block text-center !px-3 !py-3 !text-base">تصفح روابط النادي 🔗</a>
+    <div id="follow" class="grid grid-cols-1 gap-3 mt-3">
+      <a href="https://www.instagram.com/enactusflshac?mdxt=dmhwdmE3N3Q0OWsw" target="_blank" rel="noopener noreferrer" class="btn btn-ig block text-center !px-4 !py-3 !text-base">📸 تابعنا على إنستغرام</a>
+      <a href="https://solo.to/enactus.flshac" target="_blank" rel="noopener noreferrer" class="btn btn-solo block text-center !px-4 !py-3 !text-base">🌐 تصفح كافة روابط النادي</a>
     </div>
+    <p id="afterDl" class="hidden text-sm font-bold text-emerald-600 mt-3">✓ تم حفظ بطاقتك! لا تنسَ متابعتنا 💛</p>
     <button id="closeModal" class="btn w-full mt-4">إغلاق</button>
   </div>
 </div>
@@ -577,7 +583,7 @@ function wrapLines(x,text,maxW){
 }
 async function drawPass(d){
   try{ await Promise.all([document.fonts.load('700 64px "Reem Kufi"'), document.fonts.load('500 32px Tajawal'), document.fonts.load('700 32px Tajawal')]); }catch(_){}
-  const W=900, H=1760, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const W=900, H=1640, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
   const x = cv.getContext('2d'); x.direction='rtl'; x.textAlign='center'; x.textBaseline='middle';
   // gradient border + body
   let g = x.createLinearGradient(0,0,W,H);
@@ -614,26 +620,26 @@ async function drawPass(d){
   const cw = x.measureText(txt).width+80;
   rr(x,W/2-cw/2,1085,cw,90,45); x.fillStyle='rgba(245,184,28,.16)'; x.fill(); x.strokeStyle='#f5b81c'; x.lineWidth=3; x.stroke();
   x.fillStyle='#f5b81c'; x.fillText(txt, W/2, 1131);
-  // QR code -> https://solo.to/enactus.flshac
-  const qs=8, qn=QR_ROWS.length+8, qb=qn*qs, qx=W/2-qb/2, qy=1210;
-  rr(x,qx-6,qy-6,qb+12,qb+12,34); x.strokeStyle='#f5b81c'; x.lineWidth=5; x.stroke();
-  rr(x,qx,qy,qb,qb,28); x.fillStyle='#fff'; x.fill();
+  // divider
+  x.fillStyle='rgba(255,255,255,.3)'; for(let i=90;i<W-90;i+=22){ x.beginPath(); x.arc(i,1232,3,0,7); x.fill(); }
+  // QR code (bottom-left) -> https://solo.to/enactus.flshac
+  const qs=7, qb=(QR_ROWS.length+8)*qs, qx=90, qy=1285;
+  rr(x,qx-6,qy-6,qb+12,qb+12,32); x.strokeStyle='#f5b81c'; x.lineWidth=5; x.stroke();
+  rr(x,qx,qy,qb,qb,26); x.fillStyle='#fff'; x.fill();
   x.fillStyle='#0a1a3f';
   QR_ROWS.forEach((r,j)=>{ for(let i=0;i<r.length;i++) if(r[i]==='1') x.fillRect(qx+(i+4)*qs, qy+(j+4)*qs, qs, qs); });
-  x.fillStyle='rgba(255,255,255,.85)'; x.font='500 32px Tajawal'; x.fillText('امسح الكود لتصفح روابط النادي 🔗', W/2, qy+qb+52);
-  x.fillStyle='rgba(255,255,255,.3)'; for(let i=90;i<W-90;i+=22){ x.beginPath(); x.arc(i,1618,3,0,7); x.fill(); }
-  // social row: [instagram] [link]  @enactusflshac
-  x.font='700 44px Tajawal'; x.direction='ltr';
-  const handle='@enactusflshac', tw=x.measureText(handle).width, total=64+16+64+26+tw, sx=(W-total)/2, cy=1672;
+  x.fillStyle='#f5b81c'; x.font='700 30px Tajawal'; x.fillText('امسحني للمزيد 🔗', qx+qb/2, qy+qb+46);
+  // info block (right): icons, handle, club, pass number
+  const cx = (qx+qb+40 + W-90)/2, cy = 1335;
   x.strokeStyle='#f5b81c'; x.lineWidth=3;
-  [sx+32, sx+112].forEach(cx=>{ x.beginPath(); x.arc(cx,cy,32,0,7); x.stroke(); });
-  x.lineWidth=4; x.lineCap='round';                                      // instagram glyph
-  rr(x,sx+32-15,cy-15,30,30,9); x.stroke(); x.beginPath(); x.arc(sx+32,cy,7,0,7); x.stroke();
-  x.fillStyle='#f5b81c'; x.beginPath(); x.arc(sx+32+9,cy-9,2.5,0,7); x.fill();
-  x.textAlign='center'; x.font='28px Tajawal'; x.fillText('🔗', sx+112, cy+2);   // link glyph
-  x.textAlign='left'; x.font='700 44px Tajawal'; x.fillStyle='#f5b81c'; x.fillText(handle, sx+total-tw, cy+2);
-  x.textAlign='center'; x.direction='rtl';
-  x.fillStyle='rgba(255,255,255,.6)'; x.font='500 28px Tajawal'; x.fillText('نادي Enactus FLSH Ain Chock  ·  N° '+d.no, W/2, 1730);
+  [cx-42, cx+42].forEach(c=>{ x.beginPath(); x.arc(c,cy,30,0,7); x.stroke(); });
+  x.lineWidth=4; x.lineCap='round';                                        // instagram glyph
+  rr(x,cx-42-14,cy-14,28,28,8); x.stroke(); x.beginPath(); x.arc(cx-42,cy,6.5,0,7); x.stroke();
+  x.fillStyle='#f5b81c'; x.beginPath(); x.arc(cx-42+8.5,cy-8.5,2.4,0,7); x.fill();
+  x.textAlign='center'; x.font='26px Tajawal'; x.fillText('🔗', cx+42, cy+2);   // link glyph
+  x.direction='ltr'; x.font='700 40px Tajawal'; x.fillStyle='#f5b81c'; x.fillText('@enactusflshac', cx, cy+82); x.direction='rtl';
+  x.fillStyle='rgba(255,255,255,.65)'; x.font='500 26px Tajawal'; x.fillText('نادي Enactus FLSH Ain Chock', cx, cy+140);
+  x.fillStyle='#f5b81c'; x.font='700 28px Tajawal'; x.fillText('N° '+d.no, cx, cy+188);
   return cv;
 }
 async function downloadPass(d){
