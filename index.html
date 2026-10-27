@@ -115,7 +115,7 @@
     background:linear-gradient(135deg,#f5b81c,#1d4ed8 35%,#22d3ee 65%,#f5b81c);background-size:250% 250%;animation:borderFlow 7s linear infinite;
     box-shadow:0 30px 60px -20px rgba(0,0,0,.7),0 0 44px -8px rgba(29,78,216,.7)}
   @keyframes borderFlow{0%{background-position:0% 50%}100%{background-position:250% 50%}}
-  .pass-in{position:relative;overflow:hidden;border-radius:25px;text-align:center;padding:1.1rem 1.3rem 1.2rem;
+  .pass-in{position:relative;overflow:hidden;border-radius:25px;text-align:center;color:#fff;padding:1.1rem 1.3rem 1.2rem;
     background:radial-gradient(circle at 100% 0,rgba(29,78,216,.55),transparent 55%),radial-gradient(circle at 0 100%,rgba(245,184,28,.25),transparent 55%),linear-gradient(170deg,#0f2557,#071330)}
   .pass-shine{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.12) 50%,transparent 65%);
     transform:translateX(130%);animation:passShine 5s ease-in-out infinite}
@@ -124,7 +124,7 @@
   .pass-logo{display:inline-block;background:#fff;border-radius:14px;padding:.35rem .8rem}
   .pass-logo img{height:40px;width:auto;display:block}
   .pass-kicker{margin-top:.9rem;color:#f5b81c;font-weight:700;font-size:.8rem;letter-spacing:.35em}
-  .pass-title{font-size:1.9rem;line-height:1.2;font-weight:700}
+  .pass-title{font-size:1.9rem;line-height:1.2;font-weight:700;color:#fff;text-shadow:0 0 18px rgba(245,184,28,.45)}
   .pass-sub{font-size:.85rem;color:rgba(255,255,255,.75)} .pass-sub b{color:#f5b81c}
   .pass-dots{height:0;border-top:2px dotted rgba(255,255,255,.28);margin:.9rem 0}
   .pass-lbl{font-size:.72rem;color:rgba(255,255,255,.5);margin-bottom:.15rem}
@@ -136,10 +136,26 @@
   .pass-chip{display:inline-flex;align-items:center;gap:.5rem;max-width:100%;padding:.5rem 1rem;border-radius:999px;
     background:rgba(245,184,28,.15);border:1px solid #f5b81c;color:#f5b81c;font-weight:700;font-size:.9rem;transition:all .3s}
   .pass-chip.empty{opacity:.5;border-style:dashed}
-  .barcode{height:36px;margin:1.1rem auto .6rem;width:80%;opacity:.8;
-    background:repeating-linear-gradient(90deg,#fff 0 2px,transparent 2px 5px,#fff 5px 6px,transparent 6px 9px,#fff 9px 12px,transparent 12px 14px)}
-  .pass-foot{display:flex;justify-content:space-between;font-size:.7rem;color:rgba(255,255,255,.6)}
-  .pass-foot span:last-child{direction:ltr;color:#f5b81c;font-weight:700}
+  .pass-qr{display:flex;align-items:center;justify-content:center;gap:.9rem;margin:1.1rem 0 .3rem;text-decoration:none;color:#fff}
+  .pass-qr-box{display:block;width:96px;height:96px;flex-shrink:0;background:#fff;border-radius:14px;padding:3px;
+    box-shadow:0 0 0 2px rgba(245,184,28,.7),0 10px 22px -8px #000;transition:transform .25s}
+  .pass-qr:hover .pass-qr-box{transform:scale(1.05) rotate(-2deg)}
+  .pass-qr-box svg{display:block;width:100%;height:100%}
+  .pass-qr-txt{font-size:.8rem;line-height:1.7;color:rgba(255,255,255,.78);text-align:right}
+  .pass-qr-txt b{color:#f5b81c;font-size:.95rem}
+  .pass-social{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap}
+  .pass-ico{width:32px;height:32px;border-radius:50%;border:1px solid rgba(245,184,28,.75);display:grid;place-items:center;color:#f5b81c;transition:all .25s}
+  .pass-ico:hover{background:#f5b81c;color:#0a1a3f;transform:translateY(-2px)}
+  .pass-ico svg{width:16px;height:16px}
+  .pass-handle{direction:ltr;unicode-bidi:isolate;color:#f5b81c;font-weight:700;font-size:1rem;text-decoration:none;letter-spacing:.01em}
+  .pass-handle:hover{text-decoration:underline}
+  .pass-meta{margin-top:.7rem;font-size:.68rem;color:rgba(255,255,255,.55)}
+  .pass-meta b{display:inline-block;direction:ltr;color:#f5b81c}
+
+  /* Popup follow buttons */
+  .btn-ig{background:linear-gradient(45deg,#f09433,#e6683c 30%,#dc2743 60%,#bc1888);color:#fff;box-shadow:0 12px 26px -10px rgba(220,39,67,.8)}
+  .btn-solo{background:linear-gradient(135deg,#0ea5e9,#1d4ed8);color:#fff;box-shadow:0 12px 26px -10px rgba(29,78,216,.8)}
+  .btn-ig:hover,.btn-solo:hover{letter-spacing:normal}
 
   @media (prefers-reduced-motion:reduce){.pass,.pass-shine,.pass-name.bump{animation:none}}
 
@@ -307,50 +323,116 @@
           <div id="passName" class="pass-name"></div>
           <p class="pass-lbl">نوع الفن</p>
           <div id="passChip" class="pass-chip"><span id="passEmoji">🎨</span><span id="passType"></span></div>
-          <div class="barcode" aria-hidden="true"></div>
-          <div class="pass-foot"><span>نادي Enactus FLSH Ain Chock</span><span id="passNo">N° 0000</span></div>
+          <a class="pass-qr" href="https://solo.to/enactus.flshac" target="_blank" rel="noopener noreferrer" aria-label="تصفح روابط النادي">
+            <span id="passQR" class="pass-qr-box" aria-hidden="true"></span>
+            <span class="pass-qr-txt"><b>امسح الكود</b><br>لتصفح روابط النادي 🔗</span>
+          </a>
+          <div class="pass-dots"></div>
+          <div class="pass-social">
+            <a class="pass-ico" href="https://www.instagram.com/enactusflshac?mdxt=dmhwdmE3N3Q0OWsw" target="_blank" rel="noopener noreferrer" aria-label="إنستغرام"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg></a>
+            <a class="pass-ico" href="https://solo.to/enactus.flshac" target="_blank" rel="noopener noreferrer" aria-label="روابط النادي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg></a>
+            <a class="pass-handle" href="https://www.instagram.com/enactusflshac?mdxt=dmhwdmE3N3Q0OWsw" target="_blank" rel="noopener noreferrer">@enactusflshac</a>
+          </div>
+          <p class="pass-meta">نادي Enactus FLSH Ain Chock · <b id="passNo">N° 0000</b></p>
         </div>
       </div>
     </div>
 
-    <button id="dlModal" class="btn btn-alt w-full mt-6 mb-3">⬇ تحميل بطاقتي (PNG)</button>
-    <button id="closeModal" class="btn w-full">إغلاق</button>
+    <button id="dlModal" class="btn btn-alt w-full mt-6">⬇ تحميل بطاقتي (PNG)</button>
+    <p id="afterDl" class="hidden text-sm font-bold text-emerald-600 mt-3">✓ تم حفظ بطاقتك! لا تنسَ متابعتنا 💛</p>
+    <div id="follow" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+      <a href="https://www.instagram.com/enactusflshac?mdxt=dmhwdmE3N3Q0OWsw" target="_blank" rel="noopener noreferrer" class="btn btn-ig block text-center !px-3 !py-3 !text-base">تابعنا على إنستغرام 📸</a>
+      <a href="https://solo.to/enactus.flshac" target="_blank" rel="noopener noreferrer" class="btn btn-solo block text-center !px-3 !py-3 !text-base">تصفح روابط النادي 🔗</a>
+    </div>
+    <button id="closeModal" class="btn w-full mt-4">إغلاق</button>
   </div>
 </div>
 
 <canvas id="confetti"></canvas>
 
 <script>
-/* ---------- 0. Micro sound effects (Web Audio API, no files) ---------- */
+/* ---------- 0. Micro sound effects (Web Audio API + WAV fallback) ---------- */
 const sfx = (()=>{
-  let ctx = null, muted = false;
-  try{ muted = localStorage.getItem('sfxMuted')==='1'; }catch(_){}
-  const get = ()=>{
-    if(muted) return null;
-    try{
-      if(!ctx){ const C = window.AudioContext||window.webkitAudioContext; if(!C) return null; ctx = new C(); }
-      if(ctx.state==='suspended') ctx.resume();
-      return ctx;
-    }catch(_){ return null; }
+  // every sound = list of synthesized notes: f=Hz, to=glide target, t=start(s), d=length(s), v=volume 0-1
+  const SOUNDS = {
+    pop:   [{f:420,to:880,d:.12,v:.55},{f:1320,t:.04,d:.09,v:.16,type:'triangle'}],
+    click: [{f:320,to:180,d:.08,v:.6,type:'triangle'}],
+    tick:  [{f:900,to:700,d:.06,v:.35}],
+    nope:  [{f:230,to:150,d:.2,v:.5,type:'triangle'}],
+    chime: [523.25,659.25,783.99,1046.5].flatMap((f,i)=>[{f,t:i*.11,d:.6,v:.5},{f:f*2,t:i*.11,d:.4,v:.12,type:'triangle'}])
+             .concat([{f:1318.5,t:.5,d:.9,v:.35}])
   };
-  function tone(c,{f=440,to=null,t=0,d=.15,type='sine',v=.08}){
-    const o=c.createOscillator(), g=c.createGain(), n=c.currentTime+t;
-    o.type=type; o.frequency.setValueAtTime(f,n);
-    if(to) o.frequency.exponentialRampToValueAtTime(to,n+d);
-    g.gain.setValueAtTime(.0001,n); g.gain.exponentialRampToValueAtTime(v,n+.012); g.gain.exponentialRampToValueAtTime(.0001,n+d);
-    o.connect(g).connect(c.destination); o.start(n); o.stop(n+d+.03);
+  let muted = false;
+  try{ muted = localStorage.getItem('sfxMuted')==='1'; }catch(_){}
+
+  /* --- Web Audio path --- */
+  let ctx = null, master = null, primed = false;
+  function ensure(){
+    if(ctx) return ctx;
+    const C = window.AudioContext || window.webkitAudioContext; if(!C) return null;
+    try{
+      ctx = new C();
+      const comp = ctx.createDynamicsCompressor(); master = ctx.createGain(); master.gain.value = .8;
+      master.connect(comp); comp.connect(ctx.destination);
+    }catch(_){ ctx = null; }
+    return ctx;
   }
-  const play = fn => ()=>{ const c=get(); if(c) fn(c); };
+  // Browsers only allow audio after a user gesture: unlock on the very first interaction (capture phase)
+  function unlock(){
+    const c = ensure(); if(!c) return;
+    if(c.state !== 'running') c.resume().catch(()=>{});
+    if(!primed){                                  // play a silent buffer: required by iOS / Safari
+      try{ const s = c.createBufferSource(); s.buffer = c.createBuffer(1,1,22050); s.connect(c.destination); s.start(0); primed = true; }catch(_){}
+    }
+  }
+  ['pointerdown','mousedown','touchstart','touchend','click','keydown'].forEach(ev=>
+    window.addEventListener(ev, unlock, {capture:true, passive:true}));
+
+  function schedule(c, notes){
+    const t0 = c.currentTime + .01;
+    notes.forEach(n=>{
+      const o = c.createOscillator(), g = c.createGain(), st = t0 + (n.t||0), en = st + n.d;
+      o.type = n.type || 'sine'; o.frequency.setValueAtTime(n.f, st);
+      if(n.to) o.frequency.exponentialRampToValueAtTime(n.to, en);
+      g.gain.setValueAtTime(.0001, st); g.gain.exponentialRampToValueAtTime(n.v||.3, st+.012); g.gain.exponentialRampToValueAtTime(.0001, en);
+      o.connect(g); g.connect(master); o.start(st); o.stop(en+.05);
+    });
+  }
+
+  /* --- Fallback path: render the same notes to a WAV and play it with <audio> --- */
+  const wavCache = {};
+  function wavURL(name){
+    if(wavCache[name]) return wavCache[name];
+    const notes = SOUNDS[name], sr = 22050;
+    const n = Math.ceil((Math.max(...notes.map(e=>(e.t||0)+e.d))+.05)*sr), buf = new Float32Array(n);
+    notes.forEach(e=>{
+      const t0 = Math.floor((e.t||0)*sr), len = Math.floor(e.d*sr); let ph = 0;
+      for(let i=0;i<len && t0+i<n;i++){
+        const k = i/len, f = e.to ? e.f*Math.pow(e.to/e.f,k) : e.f; ph += 2*Math.PI*f/sr;
+        const w = e.type==='triangle' ? (2/Math.PI)*Math.asin(Math.sin(ph)) : Math.sin(ph);
+        buf[t0+i] += w * Math.min(1,i/(.012*sr)) * Math.pow(1-k,2) * (e.v||.3) * .8;
+      }
+    });
+    const dv = new DataView(new ArrayBuffer(44+n*2)), W = (o,t)=>[...t].forEach((c,i)=>dv.setUint8(o+i,c.charCodeAt(0)));
+    W(0,'RIFF'); dv.setUint32(4,36+n*2,true); W(8,'WAVE'); W(12,'fmt '); dv.setUint32(16,16,true); dv.setUint16(20,1,true);
+    dv.setUint16(22,1,true); dv.setUint32(24,sr,true); dv.setUint32(28,sr*2,true); dv.setUint16(32,2,true); dv.setUint16(34,16,true);
+    W(36,'data'); dv.setUint32(40,n*2,true);
+    for(let i=0;i<n;i++) dv.setInt16(44+i*2, Math.max(-1,Math.min(1,buf[i]))*32767, true);
+    return wavCache[name] = URL.createObjectURL(new Blob([dv],{type:'audio/wav'}));
+  }
+  function fallback(name){ try{ const a = new Audio(wavURL(name)); a.volume = .8; a.play().catch(()=>{}); }catch(_){} }
+
+  function play(name){
+    if(muted) return;
+    const c = ensure(); if(!c) return fallback(name);
+    try{
+      if(c.state === 'running') schedule(c, SOUNDS[name]);
+      else c.resume().then(()=>schedule(c, SOUNDS[name])).catch(()=>fallback(name));
+    }catch(_){ fallback(name); }
+  }
   return {
-    pop:   play(c=>{ tone(c,{f:420,to:880,d:.11,v:.09}); tone(c,{f:1320,t:.04,d:.08,v:.025,type:'triangle'}); }),
-    click: play(c=>tone(c,{f:260,to:170,d:.06,type:'triangle',v:.07})),
-    tick:  play(c=>tone(c,{f:900,to:700,d:.05,v:.04})),
-    nope:  play(c=>tone(c,{f:220,to:160,d:.16,type:'triangle',v:.06})),
-    chime: play(c=>{
-      [523.25,659.25,783.99,1046.5].forEach((f,i)=>{ tone(c,{f,t:i*.1,d:.55,v:.07}); tone(c,{f:f*2,t:i*.1,d:.35,v:.018,type:'triangle'}); });
-      tone(c,{f:1318.5,t:.45,d:.8,v:.05});
-    }),
-    toggle(){ muted=!muted; try{localStorage.setItem('sfxMuted',muted?'1':'0')}catch(_){} if(!muted) this.pop(); return muted; },
+    pop:()=>play('pop'), click:()=>play('click'), tick:()=>play('tick'), nope:()=>play('nope'), chime:()=>play('chime'),
+    toggle(){ muted=!muted; try{localStorage.setItem('sfxMuted',muted?'1':'0')}catch(_){} if(!muted) play('pop'); return muted; },
     get muted(){ return muted; }
   };
 })();
@@ -457,6 +539,17 @@ const passNo = String(Math.floor(Math.random()*9000)+1000);          // decorati
 document.getElementById('passLogo').src = document.querySelector('header img').src;
 let lastPass = null;
 
+/* QR code for https://solo.to/enactus.flshac — pre-computed (version 3, level M), no library needed */
+const QR_ROWS = ["11111110010011001001001111111", "10000010110100111001101000001", "10111010001111101000001011101", "10111010001011110001101011101", "10111010100110100111001011101", "10000010010011000011001000001", "11111110101010101010101111111", "00000000011101101101100000000", "10101010000010110100000010010", "10110001001010110100111101001", "10100110101101000100010100111", "11101000011110010100011010010", "10000110000010001100111001011", "10100000011001011000101001001", "00011011100000111000011011011", "01011101011001101101010011010", "01100010111100110100111001011", "01011101010010110110111001101", "10010110110011000110110100011", "01111001101010010110101011010", "11100010000110001101111110000", "00000000110111011001100010111", "11111110011010111011101011011", "10000010011011101100100011011", "10111010100010111100111110010", "10111010001010110100010110100", "10111010101010000011100111001", "10000010011101100111101010010", "11111110110001001101110011011"];
+(function(){
+  const n = QR_ROWS.length, q = 4;                       // 4-module quiet zone
+  let d = '';
+  QR_ROWS.forEach((r,y)=>{ for(let x=0;x<n;x++) if(r[x]==='1') d += `M${x+q} ${y+q}h1v1h-1z`; });
+  document.getElementById('passQR').innerHTML =
+    `<svg viewBox="0 0 ${n+2*q} ${n+2*q}" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#fff"/><path fill="#0a1a3f" d="${d}"/></svg>`;
+})();
+
+
 function getPassData(){
   const act = document.querySelector('.type-card.active');
   const other = !!act && act.dataset.value==='other';
@@ -471,6 +564,8 @@ function fillPass(d){
   document.getElementById('passEmoji').textContent = d.emoji;
   document.getElementById('passType').textContent = d.label;
   document.getElementById('passNo').textContent = 'N° '+d.no;
+  document.getElementById('afterDl').classList.add('hidden');
+  document.getElementById('dlModal').textContent = '⬇ تحميل بطاقتي (PNG)';
 }
 
 // --- draw the pass on a canvas (900x1400) and download it ---
@@ -482,7 +577,7 @@ function wrapLines(x,text,maxW){
 }
 async function drawPass(d){
   try{ await Promise.all([document.fonts.load('700 64px "Reem Kufi"'), document.fonts.load('500 32px Tajawal'), document.fonts.load('700 32px Tajawal')]); }catch(_){}
-  const W=900, H=1400, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const W=900, H=1760, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
   const x = cv.getContext('2d'); x.direction='rtl'; x.textAlign='center'; x.textBaseline='middle';
   // gradient border + body
   let g = x.createLinearGradient(0,0,W,H);
@@ -519,23 +614,45 @@ async function drawPass(d){
   const cw = x.measureText(txt).width+80;
   rr(x,W/2-cw/2,1085,cw,90,45); x.fillStyle='rgba(245,184,28,.16)'; x.fill(); x.strokeStyle='#f5b81c'; x.lineWidth=3; x.stroke();
   x.fillStyle='#f5b81c'; x.fillText(txt, W/2, 1131);
-  // barcode (decorative, seeded by pass number)
-  let seed = +d.no, bx = 150; x.fillStyle='rgba(255,255,255,.85)';
-  while(bx < W-150){ seed = (seed*9301+49297)%233280; const bw = 3+Math.floor(seed/233280*8); x.fillRect(bx,1220,bw,60); bx += bw + 4 + Math.floor((seed%7)/2); }
-  // footer
-  x.fillStyle='rgba(255,255,255,.6)'; x.font='500 30px Tajawal'; x.fillText('N° '+d.no, W/2, 1318);
-  x.fillStyle='#f5b81c'; x.font='700 34px Tajawal'; x.fillText('نادي Enactus FLSH Ain Chock', W/2, 1360);
+  // QR code -> https://solo.to/enactus.flshac
+  const qs=8, qn=QR_ROWS.length+8, qb=qn*qs, qx=W/2-qb/2, qy=1210;
+  rr(x,qx-6,qy-6,qb+12,qb+12,34); x.strokeStyle='#f5b81c'; x.lineWidth=5; x.stroke();
+  rr(x,qx,qy,qb,qb,28); x.fillStyle='#fff'; x.fill();
+  x.fillStyle='#0a1a3f';
+  QR_ROWS.forEach((r,j)=>{ for(let i=0;i<r.length;i++) if(r[i]==='1') x.fillRect(qx+(i+4)*qs, qy+(j+4)*qs, qs, qs); });
+  x.fillStyle='rgba(255,255,255,.85)'; x.font='500 32px Tajawal'; x.fillText('امسح الكود لتصفح روابط النادي 🔗', W/2, qy+qb+52);
+  x.fillStyle='rgba(255,255,255,.3)'; for(let i=90;i<W-90;i+=22){ x.beginPath(); x.arc(i,1618,3,0,7); x.fill(); }
+  // social row: [instagram] [link]  @enactusflshac
+  x.font='700 44px Tajawal'; x.direction='ltr';
+  const handle='@enactusflshac', tw=x.measureText(handle).width, total=64+16+64+26+tw, sx=(W-total)/2, cy=1672;
+  x.strokeStyle='#f5b81c'; x.lineWidth=3;
+  [sx+32, sx+112].forEach(cx=>{ x.beginPath(); x.arc(cx,cy,32,0,7); x.stroke(); });
+  x.lineWidth=4; x.lineCap='round';                                      // instagram glyph
+  rr(x,sx+32-15,cy-15,30,30,9); x.stroke(); x.beginPath(); x.arc(sx+32,cy,7,0,7); x.stroke();
+  x.fillStyle='#f5b81c'; x.beginPath(); x.arc(sx+32+9,cy-9,2.5,0,7); x.fill();
+  x.textAlign='center'; x.font='28px Tajawal'; x.fillText('🔗', sx+112, cy+2);   // link glyph
+  x.textAlign='left'; x.font='700 44px Tajawal'; x.fillStyle='#f5b81c'; x.fillText(handle, sx+total-tw, cy+2);
+  x.textAlign='center'; x.direction='rtl';
+  x.fillStyle='rgba(255,255,255,.6)'; x.font='500 28px Tajawal'; x.fillText('نادي Enactus FLSH Ain Chock  ·  N° '+d.no, W/2, 1730);
   return cv;
 }
 async function downloadPass(d){
   const cv = await drawPass(d);
-  cv.toBlob(b=>{
-    if(!b) return;
+  return new Promise(res=>cv.toBlob(b=>{
+    if(!b) return res(false);
     const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'artist-pass-2026.png';
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
-  },'image/png');
+    res(true);
+  },'image/png'));
 }
-document.getElementById('dlModal').addEventListener('click', ()=>{ if(lastPass) downloadPass(lastPass); });
+document.getElementById('dlModal').addEventListener('click', async ()=>{
+  if(!lastPass) return;
+  if(await downloadPass(lastPass)){
+    document.getElementById('dlModal').textContent = '✓ تم التحميل — تحميل مرة أخرى';
+    document.getElementById('afterDl').classList.remove('hidden');
+    document.getElementById('follow').scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+});
 
 /* ---------- 6. Validation ---------- */
 const LINK_RE = /^https?:\/\/[^\s.]+\.[^\s]{2,}$/i;
