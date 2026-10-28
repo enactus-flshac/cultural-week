@@ -701,19 +701,26 @@ form.addEventListener('submit', async e=>{
     'رابط العمل': payload.sampleLink || 'لم يُدخل رابط',
     'معرّف التسجيل': submissionId
   };
-  /* The email is delivered by FormSubmit, but its reply is slow / sometimes never readable from a phone browser.
-     So we do NOT wait for (or parse) the reply:
-       - mode:'no-cors'  -> the browser never blocks the request because of missing CORS headers
-       - reply arrives   -> 'ok'
-       - server just slow-> after GRACE ms we treat the already-sent request as submitted ('pending')
-       - real network failure (offline / can't connect) -> rejects, and we retry once, then show an error */
-  const GRACE = 7000;
+  /* Same request that FormSubmit accepted before (normal CORS POST, URL-encoded body, no pre-flight).
+     We read its reply when it comes, but never hang on it:
+       - reply says success      -> 'ok'
+       - reply says failure      -> reject with FormSubmit's own message (so the real problem is visible)
+       - no reply within GRACE ms-> 'pending': the request was already sent, so we continue to the pass
+       - network failure         -> reject (retried once by the caller) */
+  const GRACE = 8000;
   function sendForm(){
     return new Promise((resolve,reject)=>{
       let done = false;
       const grace = setTimeout(()=>{ if(!done){ done = true; resolve('pending'); } }, GRACE);
-      fetch(FORMSUBMIT_URL, { method:'POST', mode:'no-cors', keepalive:true, headers:{'Accept':'application/json'}, body:new URLSearchParams(fields) })
-        .then(()=>{ if(!done){ done = true; clearTimeout(grace); resolve('ok'); } })
+      fetch(FORMSUBMIT_URL, { method:'POST', headers:{'Accept':'application/json'}, body:new URLSearchParams(fields) })
+        .then(async res=>{
+          let out = {}; try{ out = await res.json(); }catch(_){}
+          const ok = res.ok && String(out.success)==='true';
+          if(done){ if(!ok) console.warn('FormSubmit replied late with an error:', res.status, out); return; }
+          done = true; clearTimeout(grace);
+          if(ok) resolve('ok');
+          else { const e = new Error(out.message || ('HTTP '+res.status)); e.server = true; reject(e); }
+        })
         .catch(err=>{ if(!done){ done = true; clearTimeout(grace); reject(err); } });
     });
   }
@@ -724,7 +731,7 @@ form.addEventListener('submit', async e=>{
     for(let attempt=1; ; attempt++){
       try{ await sendForm(); break; }
       catch(err){
-        if(attempt>=2) throw err;
+        if(attempt>=2 || err.server) throw err;
         btn.textContent = 'إعادة المحاولة… 🔄'; await wait(1500);
       }
     }
@@ -746,7 +753,9 @@ form.addEventListener('submit', async e=>{
     cards.forEach(c=>{c.classList.remove('active','pop');c.setAttribute('aria-checked','false')}); typeInput.value='';
     document.getElementById('count').textContent='0 / 500';
   }catch(err){
-    errBox.textContent = 'تعذر الاتصال بالإنترنت، لم يتم إرسال استمارتك. تأكد من الشبكة ثم اضغط «أرسل مشاركتي» مرة أخرى (بياناتك ما زالت محفوظة).';
+    errBox.textContent = err.server
+      ? 'رفض خادم البريد الاستمارة: ' + err.message + ' — أبلغ منظمي الأسبوع الثقافي، وحاول لاحقا.'
+      : 'تعذر الاتصال بالإنترنت، لم يتم إرسال استمارتك. تأكد من الشبكة ثم اضغط «أرسل مشاركتي» مرة أخرى (بياناتك ما زالت محفوظة).';
     errBox.classList.remove('hidden');
   }finally{
     clearTimeout(slowTimer);
