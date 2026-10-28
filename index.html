@@ -684,29 +684,46 @@ form.addEventListener('submit', async e=>{
   const errBox = document.getElementById('formError'); errBox.classList.add('hidden');
   btn.disabled = true; btn.classList.remove('pulse'); btn.classList.add('sending');
   btn.textContent = 'جار الإرسال...';
-  const ctrl = new AbortController(); const timer = setTimeout(()=>ctrl.abort(), 20000);
+  // unique id so the organisers can spot a duplicate if a slow first attempt actually went through
+  const submissionId = 'EN-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2,6).toUpperCase();
+  const fields = {
+    _subject: 'تسجيل جديد - الأسبوع الجامعي للفن والثقافة',
+    _cc: FORMSUBMIT_CC,
+    _template: 'table',
+    _captcha: 'false',
+    'الاسم الكامل': payload.fullName,
+    'رقم أبوجي': payload.apogee,
+    'رقم الهاتف': payload.phone,
+    'الشعبة': payload.department,
+    'نوع الفن': payload.artType,
+    'المواد والأدوات': payload.tools.join('، '),
+    'النبذة': payload.bio,
+    'رابط العمل': payload.sampleLink || 'لم يُدخل رابط',
+    'معرّف التسجيل': submissionId
+  };
+  // URL-encoded body = "simple" request: no CORS pre-flight round-trip, so it starts faster and fails less often on mobile networks
+  async function sendOnce(ms){
+    const ctrl = new AbortController(), t = setTimeout(()=>ctrl.abort(), ms);
+    try{
+      const res = await fetch(FORMSUBMIT_URL, { method:'POST', signal: ctrl.signal, headers:{'Accept':'application/json'}, body: new URLSearchParams(fields) });
+      let out = {}; try{ out = await res.json(); }catch(_){}
+      if(!res.ok || String(out.success)!=='true'){
+        const e = new Error(out.message || ('HTTP '+res.status)); e.retryable = res.status>=500; throw e;
+      }
+      return out;
+    } finally { clearTimeout(t); }
+  }
+  const slowTimer = setTimeout(()=>{ if(btn.disabled) btn.textContent = 'الاتصال بطيء… ما زلنا نرسل ⏳'; }, 7000);
   let success = false;
   try{
-    const res = await fetch(FORMSUBMIT_URL, {
-      method:'POST', signal: ctrl.signal,
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body: JSON.stringify({
-        _subject: 'تسجيل جديد - الأسبوع الجامعي للفن والثقافة',
-        _cc: FORMSUBMIT_CC,
-        _template: 'table',
-        _captcha: 'false',
-        'الاسم الكامل': payload.fullName,
-        'رقم أبوجي': payload.apogee,
-        'رقم الهاتف': payload.phone,
-        'الشعبة': payload.department,
-        'نوع الفن': payload.artType,
-        'المواد والأدوات': payload.tools.join('، '),
-        'النبذة': payload.bio,
-        'رابط العمل': payload.sampleLink || 'لم يُدخل رابط'
-      })
-    });
-    const out = await res.json();
-    if(!res.ok || String(out.success)!=='true') throw new Error(out.message || 'FormSubmit error');
+    for(let attempt=1; ; attempt++){
+      try{ await sendOnce(30000); break; }
+      catch(err){
+        const transient = err.name==='AbortError' || err instanceof TypeError || err.retryable;
+        if(attempt>=2 || !transient) throw err;
+        btn.textContent = 'إعادة المحاولة… 🔄'; await wait(1200);      // one automatic retry on slow / dropped connections
+      }
+    }
     console.log('Registration payload:', payload);
     success = true; sfx.chime();
 
@@ -725,12 +742,12 @@ form.addEventListener('submit', async e=>{
     cards.forEach(c=>{c.classList.remove('active','pop');c.setAttribute('aria-checked','false')}); typeInput.value='';
     document.getElementById('count').textContent='0 / 500';
   }catch(err){
-    errBox.textContent = err.name==='AbortError'
-      ? 'انتهت مهلة الاتصال. تحقق من الإنترنت وأعد المحاولة.'
+    errBox.textContent = (err.name==='AbortError' || err instanceof TypeError)
+      ? 'الاتصال بطيء حاليا ولم يصلنا رد من الخادم. بياناتك ما زالت محفوظة في الاستمارة، اضغط «أرسل مشاركتي» مرة أخرى.'
       : 'تعذر إرسال الاستمارة. يرجى المحاولة مرة أخرى. (' + (err.message||err) + ')';
     errBox.classList.remove('hidden');
   }finally{
-    clearTimeout(timer);
+    clearTimeout(slowTimer);
     btn.disabled=false; btn.classList.remove('sending','done'); btn.classList.add('pulse');
     btn.textContent='أرسل مشاركتي 🎨';
   }
