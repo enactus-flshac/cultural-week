@@ -136,20 +136,13 @@
   .pass-chip{display:inline-flex;align-items:center;gap:.5rem;max-width:100%;padding:.5rem 1rem;border-radius:999px;
     background:rgba(245,184,28,.15);border:1px solid #f5b81c;color:#f5b81c;font-weight:700;font-size:.9rem;transition:all .3s}
   .pass-chip.empty{opacity:.5;border-style:dashed}
-  .pass-bottom{display:flex;align-items:center;justify-content:space-between;gap:.8rem}
-  .pass-info{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:.5rem}
+  .pass-bottom{display:flex;flex-direction:column;align-items:center;gap:.7rem}
   .pass-qr{display:flex;flex-direction:column;align-items:center;gap:.4rem;flex-shrink:0;text-decoration:none;color:#fff}
-  .pass-qr-box{display:block;width:100px;height:100px;background:#fff;border-radius:14px;padding:3px;
+  .pass-qr-box{display:block;width:124px;height:124px;background:#fff;border-radius:14px;padding:3px;
     box-shadow:0 0 0 2px rgba(245,184,28,.75),0 0 18px rgba(245,184,28,.35),0 10px 22px -8px #000;transition:transform .25s}
   .pass-qr:hover .pass-qr-box{transform:scale(1.06) rotate(-2deg)}
   .pass-qr-box svg{display:block;width:100%;height:100%}
   .pass-qr-mini{font-size:.68rem;font-weight:700;color:#f5b81c;white-space:nowrap}
-  .pass-social{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap}
-  .pass-ico{width:32px;height:32px;border-radius:50%;border:1px solid rgba(245,184,28,.75);display:grid;place-items:center;color:#f5b81c;transition:all .25s}
-  .pass-ico:hover{background:#f5b81c;color:#0a1a3f;transform:translateY(-2px)}
-  .pass-ico svg{width:16px;height:16px}
-  .pass-handle{direction:ltr;unicode-bidi:isolate;color:#f5b81c;font-weight:700;font-size:.95rem;text-decoration:none;letter-spacing:.01em}
-  .pass-handle:hover{text-decoration:underline}
   .pass-meta{font-size:.68rem;line-height:1.7;color:rgba(255,255,255,.6)}
   .pass-meta b{display:inline-block;direction:ltr;color:#f5b81c}
 
@@ -251,19 +244,16 @@
       <!-- 4. Art type (selection cards) -->
       <div id="typeBox" class="err-box">
         <span class="lbl">نوع الفن أو الموهبة</span>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="typeGrid" role="radiogroup">
-          <div class="type-card" data-value="visual" data-label="الفنون التشكيلية والبصرية" tabindex="0" role="radio" aria-checked="false"><span class="em">🎨</span><b class="text-sm">الفنون التشكيلية والبصرية</b><small>الرسم، الصباغة، النحت، الخط العربي</small></div>
-          <div class="type-card" data-value="recycle" data-label="إعادة التدوير والابتكار البيئي" tabindex="0" role="radio" aria-checked="false"><span class="em">♻️</span><b class="text-sm">إعادة التدوير والابتكار البيئي</b><small>مجسمات ولوحات وديكورات من مواد معاد تدويرها</small></div>
-          <div class="type-card" data-value="music" data-label="الفنون الموسيقية" tabindex="0" role="radio" aria-checked="false"><span class="em">🎵</span><b class="text-sm">الفنون الموسيقية</b><small>العزف المنفرد، الغناء، المجموعات الصوتية</small></div>
-          <div class="type-card" data-value="theater" data-label="الفنون المسرحية والدرامية" tabindex="0" role="radio" aria-checked="false"><span class="em">🎭</span><b class="text-sm">الفنون المسرحية والدرامية</b><small>التجسيد المسرحي، المونودراما، الكوميديا الارتجالية</small></div>
-          <div class="type-card" data-value="cinema" data-label="الفنون السينمائية والتصوير" tabindex="0" role="radio" aria-checked="false"><span class="em">🎬</span><b class="text-sm">الفنون السينمائية والتصوير</b><small>الأفلام القصيرة، التصوير الفوتوغرافي، المونتاج</small></div>
-          <div class="type-card" data-value="literature" data-label="الأدب والشعر" tabindex="0" role="radio" aria-checked="false"><span class="em">✒️</span><b class="text-sm">الأدب والشعر</b><small>إلقاء الشعر، الزجل، القصة القصيرة، كتابة النصوص</small></div>
-          <div class="type-card" data-value="performance" data-label="الأداء الجسدي والتعبير الحركي" tabindex="0" role="radio" aria-checked="false"><span class="em">💃</span><b class="text-sm">الأداء الجسدي والتعبير الحركي</b><small>الرقص التعبيري، البانتوميم، البهلوانات</small></div>
-          <div class="type-card" data-value="other" data-label="أخرى" tabindex="0" role="radio" aria-checked="false"><span class="em">✨</span><b class="text-sm">أخرى</b><small>فن آخر غير مدرج في القائمة</small></div>
-          </div>
-        <div id="otherWrap" class="field mt-4" style="display:none"><input id="otherArt" name="otherArt" type="text" placeholder="اكتب نوع فنك أو موهبتك" style="padding-right:1rem"></div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="typeGrid" role="radiogroup">
+          <div class="type-card" data-value="drawing" data-label="الرسم والتخطيط والتلوين" tabindex="0" role="radio" aria-checked="false"><span class="em">🎨</span><b class="text-sm">الرسم والتخطيط والتلوين</b></div>
+          <div class="type-card" data-value="jewelry" data-label="المجوهرات والإكسسوارات" tabindex="0" role="radio" aria-checked="false"><span class="em">💍</span><b class="text-sm">المجوهرات والإكسسوارات</b></div>
+          <div class="type-card" data-value="handicrafts" data-label="الحرف اليدوية" tabindex="0" role="radio" aria-checked="false"><span class="em">🧶</span><b class="text-sm">الحرف اليدوية</b></div>
+          <div class="type-card" data-value="photography" data-label="التصوير الفوتوغرافي" tabindex="0" role="radio" aria-checked="false"><span class="em">📸</span><b class="text-sm">التصوير الفوتوغرافي</b></div>
+          <div class="type-card" data-value="digital-stickers" data-label="الفن الرقمي وتصميم الملصقات (stickers)" tabindex="0" role="radio" aria-checked="false"><span class="em">😜</span><b class="text-sm">الفن الرقمي وتصميم الملصقات (stickers)</b></div>
+          <div class="type-card" data-value="recycled" data-label="الفن الإبداعي باستخدام المواد المعاد تدويرها" tabindex="0" role="radio" aria-checked="false"><span class="em">♻️</span><b class="text-sm">الفن الإبداعي باستخدام المواد المعاد تدويرها</b></div>
+        </div>
         <input type="hidden" id="artType" name="artType">
-        <p class="msg">يرجى اختيار نوع موهبتك (وكتابته إن اخترت «أخرى»).</p>
+        <p class="msg">يرجى اختيار نوع موهبتك.</p>
       </div>
 
       <!-- 5. Materials / tools (tags input) -->
@@ -327,18 +317,11 @@
           <div id="passChip" class="pass-chip"><span id="passEmoji">🎨</span><span id="passType"></span></div>
           <div class="pass-dots" style="margin-top:1.1rem"></div>
           <div class="pass-bottom">
-            <div class="pass-info">
-              <div class="pass-social">
-                <a class="pass-ico" href="https://www.instagram.com/enactusflshac?mdxt=dmhwdmE3N3Q0OWsw" target="_blank" rel="noopener noreferrer" aria-label="إنستغرام"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg></a>
-                <a class="pass-ico" href="https://solo.to/enactus.flshac" target="_blank" rel="noopener noreferrer" aria-label="روابط النادي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg></a>
-              </div>
-              <a class="pass-handle" href="https://www.instagram.com/enactusflshac?mdxt=dmhwdmE3N3Q0OWsw" target="_blank" rel="noopener noreferrer">@enactusflshac</a>
-              <p class="pass-meta">نادي Enactus FLSH Ain Chock<br><b id="passNo">N° 0000</b></p>
-            </div>
             <a class="pass-qr" href="https://solo.to/enactus.flshac" target="_blank" rel="noopener noreferrer" aria-label="امسحني للمزيد: روابط النادي">
               <span id="passQR" class="pass-qr-box" aria-hidden="true"></span>
               <span class="pass-qr-mini">امسحني للمزيد 🔗</span>
             </a>
+            <p class="pass-meta">نادي Enactus FLSH Ain Chock · <b id="passNo">N° 0000</b></p>
           </div>
         </div>
       </div>
@@ -500,8 +483,6 @@ function pick(c){
   setTimeout(()=>c.classList.remove('pop'), 520);       // then fall back to float + glow loop
   typeInput.value = c.dataset.value;
   sfx.pop();
-  const ow=document.getElementById('otherWrap'); ow.style.display = c.dataset.value==='other' ? 'block' : 'none';
-  if(c.dataset.value==='other') document.getElementById('otherArt').focus();
   document.getElementById('typeBox').classList.remove('err');
 }
 cards.forEach(c=>{
@@ -558,8 +539,7 @@ const QR_ROWS = ["11111110010011001001001111111", "10000010110100111001101000001
 
 function getPassData(){
   const act = document.querySelector('.type-card.active');
-  const other = !!act && act.dataset.value==='other';
-  const label = !act ? '' : other ? (document.getElementById('otherArt').value.trim() || 'أخرى') : act.dataset.label;
+  const label = act ? act.dataset.label : '';
   return { name: document.getElementById('fullName').value.trim().replace(/\s+/g,' '), label,
            emoji: act ? act.querySelector('.em').textContent : '🎨', no: passNo };
 }
@@ -583,7 +563,7 @@ function wrapLines(x,text,maxW){
 }
 async function drawPass(d){
   try{ await Promise.all([document.fonts.load('700 64px "Reem Kufi"'), document.fonts.load('500 32px Tajawal'), document.fonts.load('700 32px Tajawal')]); }catch(_){}
-  const W=900, H=1640, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const W=900, H=1740, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
   const x = cv.getContext('2d'); x.direction='rtl'; x.textAlign='center'; x.textBaseline='middle';
   // gradient border + body
   let g = x.createLinearGradient(0,0,W,H);
@@ -622,24 +602,14 @@ async function drawPass(d){
   x.fillStyle='#f5b81c'; x.fillText(txt, W/2, 1131);
   // divider
   x.fillStyle='rgba(255,255,255,.3)'; for(let i=90;i<W-90;i+=22){ x.beginPath(); x.arc(i,1232,3,0,7); x.fill(); }
-  // QR code (bottom-left) -> https://solo.to/enactus.flshac
-  const qs=7, qb=(QR_ROWS.length+8)*qs, qx=90, qy=1285;
-  rr(x,qx-6,qy-6,qb+12,qb+12,32); x.strokeStyle='#f5b81c'; x.lineWidth=5; x.stroke();
-  rr(x,qx,qy,qb,qb,26); x.fillStyle='#fff'; x.fill();
+  // QR code, centred -> https://solo.to/enactus.flshac
+  const qs=8, qb=(QR_ROWS.length+8)*qs, qx=W/2-qb/2, qy=1285;
+  rr(x,qx-6,qy-6,qb+12,qb+12,36); x.strokeStyle='#f5b81c'; x.lineWidth=5; x.stroke();
+  rr(x,qx,qy,qb,qb,30); x.fillStyle='#fff'; x.fill();
   x.fillStyle='#0a1a3f';
   QR_ROWS.forEach((r,j)=>{ for(let i=0;i<r.length;i++) if(r[i]==='1') x.fillRect(qx+(i+4)*qs, qy+(j+4)*qs, qs, qs); });
-  x.fillStyle='#f5b81c'; x.font='700 30px Tajawal'; x.fillText('امسحني للمزيد 🔗', qx+qb/2, qy+qb+46);
-  // info block (right): icons, handle, club, pass number
-  const cx = (qx+qb+40 + W-90)/2, cy = 1335;
-  x.strokeStyle='#f5b81c'; x.lineWidth=3;
-  [cx-42, cx+42].forEach(c=>{ x.beginPath(); x.arc(c,cy,30,0,7); x.stroke(); });
-  x.lineWidth=4; x.lineCap='round';                                        // instagram glyph
-  rr(x,cx-42-14,cy-14,28,28,8); x.stroke(); x.beginPath(); x.arc(cx-42,cy,6.5,0,7); x.stroke();
-  x.fillStyle='#f5b81c'; x.beginPath(); x.arc(cx-42+8.5,cy-8.5,2.4,0,7); x.fill();
-  x.textAlign='center'; x.font='26px Tajawal'; x.fillText('🔗', cx+42, cy+2);   // link glyph
-  x.direction='ltr'; x.font='700 40px Tajawal'; x.fillStyle='#f5b81c'; x.fillText('@enactusflshac', cx, cy+82); x.direction='rtl';
-  x.fillStyle='rgba(255,255,255,.65)'; x.font='500 26px Tajawal'; x.fillText('نادي Enactus FLSH Ain Chock', cx, cy+140);
-  x.fillStyle='#f5b81c'; x.font='700 28px Tajawal'; x.fillText('N° '+d.no, cx, cy+188);
+  x.fillStyle='#f5b81c'; x.font='700 32px Tajawal'; x.fillText('امسحني للمزيد 🔗', W/2, qy+qb+52);
+  x.fillStyle='rgba(255,255,255,.6)'; x.font='500 26px Tajawal'; x.fillText('نادي Enactus FLSH Ain Chock  ·  N° '+d.no, W/2, qy+qb+108);
   return cv;
 }
 async function downloadPass(d){
@@ -671,7 +641,7 @@ function validate(){
     [f('apogee').closest('.field'),   /^\d{7,10}$/.test(f('apogee').value)],
     [f('phone').closest('.field'),    /^(?:\+212|00212|0)[5-7]\d{8}$/.test(f('phone').value.replace(/[\s.-]/g,''))],
     [f('dept').closest('.field'),     !!f('dept').value],
-    [f('typeBox'),                    !!typeInput.value && (typeInput.value!=='other' || f('otherArt').value.trim().length>=2)],
+    [f('typeBox'),                    !!typeInput.value],
     [f('toolsBox'),                   tools.length>0],
     [f('bio').closest('.field'),      f('bio').value.trim().length>=20],
     [f('linkField'),                  !link || LINK_RE.test(link)],   // optional: validated only if filled
@@ -703,7 +673,7 @@ form.addEventListener('submit', async e=>{
     apogee:   form.apogee.value,
     phone:    form.phone.value.replace(/[\s.-]/g,''),
     department: form.dept.value,
-    artType:  typeInput.value==='other' ? form.otherArt.value.trim() : document.querySelector('.type-card.active').dataset.label,
+    artType:  document.querySelector('.type-card.active').dataset.label,
     tools:    tools,                       // array of strings
     bio:      bio.value.trim(),
     sampleLink: normLink(form.sampleLink.value),   // optional ('' if empty)
@@ -752,7 +722,7 @@ form.addEventListener('submit', async e=>{
     document.getElementById('modal').classList.add('show');
     paintBurst();
     form.reset(); tools.length=0; renderTags();
-    cards.forEach(c=>{c.classList.remove('active','pop');c.setAttribute('aria-checked','false')}); typeInput.value=''; document.getElementById('otherWrap').style.display='none';
+    cards.forEach(c=>{c.classList.remove('active','pop');c.setAttribute('aria-checked','false')}); typeInput.value='';
     document.getElementById('count').textContent='0 / 500';
   }catch(err){
     errBox.textContent = err.name==='AbortError'
